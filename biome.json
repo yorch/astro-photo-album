@@ -9,7 +9,8 @@
         "useSortedProperties": "on"
       }
     },
-    "enabled": true
+    "enabled": true,
+    "includes": ["**", "!package.json"]
   },
   "css": {
     "formatter": {
@@ -54,6 +55,23 @@
       "recommended": true
     }
   },
+  "overrides": [
+    {
+      "includes": ["**/*.svelte", "**/*.astro", "**/*.vue"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedImports": "off",
+            "noUnusedVariables": "off"
+          },
+          "style": {
+            "useConst": "off",
+            "useImportType": "off"
+          }
+        }
+      }
+    }
+  ],
   "vcs": {
     "clientKind": "git",
     "enabled": true,
