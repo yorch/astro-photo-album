@@ -29,7 +29,7 @@
   "[yaml]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "cSpell.words": ["exifreader", "lightbox"],
+  "cSpell.words": ["alpinejs", "exifreader", "lightbox"],
   "editor.codeActionsOnSave": {
     "source.fixAll.biome": "explicit",
     "source.organizeImports.biome": "explicit"

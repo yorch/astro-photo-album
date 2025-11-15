@@ -1333,6 +1333,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/alpinejs@npm:3.13.11":
+  version: 3.13.11
+  resolution: "@types/alpinejs@npm:3.13.11"
+  checksum: 10c0/181dcff0af59211043e4121f68548bc2efabe74f71ac397bc20aac7a497f76344e8f327745e621ec5db5b4991d12834b88840ad87e7a28c4a1554930b9e32ad6
+  languageName: node
+  linkType: hard
+
 "@types/debug@npm:^4.0.0":
   version: 4.1.12
   resolution: "@types/debug@npm:4.1.12"
@@ -1506,6 +1513,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vue/reactivity@npm:~3.1.1":
+  version: 3.1.5
+  resolution: "@vue/reactivity@npm:3.1.5"
+  dependencies:
+    "@vue/shared": "npm:3.1.5"
+  checksum: 10c0/1c38aeb73725b3825bea793194334b232388236f0b06b04471508a77cb55d71841e3eb2f345ab6812c76569918aa8f019e4cdf59ec9cefbab7625bb2bc26eb58
+  languageName: node
+  linkType: hard
+
+"@vue/shared@npm:3.1.5":
+  version: 3.1.5
+  resolution: "@vue/shared@npm:3.1.5"
+  checksum: 10c0/197aa5bdd370177d26ca7a178bb3d3d2332cee2c8e67000bd2bb91b1ffc571d5489fab3a65f38a32e941dc8182d1cd6c6af6e294bb9ea13e01eafdde475319ea
+  languageName: node
+  linkType: hard
+
 "@xmldom/xmldom@npm:^0.9.4":
   version: 0.9.8
   resolution: "@xmldom/xmldom@npm:0.9.8"
@@ -1557,6 +1580,15 @@ __metadata:
     json-schema-traverse: "npm:^1.0.0"
     require-from-string: "npm:^2.0.2"
   checksum: 10c0/ec3ba10a573c6b60f94639ffc53526275917a2df6810e4ab5a6b959d87459f9ef3f00d5e7865b82677cb7d21590355b34da14d1d0b9c32d75f95a187e76fff35
+  languageName: node
+  linkType: hard
+
+"alpinejs@npm:3.15.1":
+  version: 3.15.1
+  resolution: "alpinejs@npm:3.15.1"
+  dependencies:
+    "@vue/reactivity": "npm:~3.1.1"
+  checksum: 10c0/4552cbdaeeba5f7cf4029e2fa5f9af7db86ce454b06f4b4169b0d23c5df76ed164455f752810e7f5d5e6603fe9836c624c7bad9abfc5a622e2ce818b9b0e2233
   languageName: node
   linkType: hard
 
@@ -1637,7 +1669,9 @@ __metadata:
     "@astrojs/check": "npm:0.9.5"
     "@biomejs/biome": "npm:2.3.5"
     "@tailwindcss/vite": "npm:4.1.17"
+    "@types/alpinejs": "npm:3.13.11"
     "@types/node": "npm:24.10.1"
+    alpinejs: "npm:3.15.1"
     astro: "npm:5.15.8"
     exifreader: "npm:4.32.0"
     tailwindcss: "npm:4.1.17"

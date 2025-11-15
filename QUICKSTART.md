@@ -120,3 +120,37 @@ yarn build
 ```
 
 That's it! Enjoy your photo album! 📸
+
+---
+
+## Alpine.js Integration
+
+Alpine.js has been added for interactive features! 🎉
+
+### View the Demo
+
+```bash
+yarn dev
+# Then visit: http://localhost:4321/gallery-demo
+```
+
+### What's Available
+
+**PhotoGallery Component** - Full gallery with filtering, lightbox, keyboard nav
+
+```astro
+import PhotoGallery from '../components/PhotoGallery.astro';
+<PhotoGallery photos={photos} />
+```
+
+**PhotoCard Component** - Photo card with persistent likes
+
+```astro
+import PhotoCard from '../components/PhotoCard.astro';
+<PhotoCard src="/photo.jpg" alt="..." title="..." />
+```
+
+### Learn More
+
+- `ALPINE.md` - Full Alpine.js documentation
+- `/gallery-demo` - Live interactive examples

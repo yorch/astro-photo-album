@@ -1,0 +1,227 @@
+---
+interface Photo {
+  id: string;
+  src: string;
+  alt: string;
+  tags?: string[];
+  title?: string;
+}
+
+interface Props {
+  photos: Photo[];
+}
+
+const { photos } = Astro.props;
+---
+
+<div
+  x-data="{
+    photos: [],
+    selectedPhoto: null,
+    lightboxOpen: false,
+    selectedTag: 'all',
+    availableTags: [],
+
+    init() {
+      this.photos = JSON.parse(this.$el.dataset.photos);
+      this.availableTags = this.extractTags();
+    },
+
+    extractTags() {
+      const tags = new Set(['all']);
+      this.photos.forEach(photo => {
+        if (photo.tags) {
+          photo.tags.forEach(tag => tags.add(tag));
+        }
+      });
+      return Array.from(tags);
+    },
+
+    get filteredPhotos() {
+      if (this.selectedTag === 'all') {
+        return this.photos;
+      }
+      return this.photos.filter(photo =>
+        photo.tags && photo.tags.includes(this.selectedTag)
+      );
+    },
+
+    openLightbox(photo) {
+      this.selectedPhoto = photo;
+      this.lightboxOpen = true;
+    },
+
+    closeLightbox() {
+      this.lightboxOpen = false;
+      setTimeout(() => this.selectedPhoto = null, 300);
+    },
+
+    nextPhoto() {
+      const currentIndex = this.filteredPhotos.findIndex(p => p.id === this.selectedPhoto.id);
+      const nextIndex = (currentIndex + 1) % this.filteredPhotos.length;
+      this.selectedPhoto = this.filteredPhotos[nextIndex];
+    },
+
+    prevPhoto() {
+      const currentIndex = this.filteredPhotos.findIndex(p => p.id === this.selectedPhoto.id);
+      const prevIndex = (currentIndex - 1 + this.filteredPhotos.length) % this.filteredPhotos.length;
+      this.selectedPhoto = this.filteredPhotos[prevIndex];
+    }
+  }"
+  data-photos={JSON.stringify(photos)}
+  class="w-full max-w-7xl mx-auto p-4"
+>
+  <!-- Tag Filter -->
+  <div class="mb-6 flex flex-wrap gap-2">
+    <template x-for="tag in availableTags">
+      <button
+        @click="selectedTag = tag"
+        x-bind:class="{
+          'bg-blue-600 text-white': selectedTag === tag,
+          'bg-gray-200 text-gray-800 hover:bg-gray-300': selectedTag !== tag
+        }"
+        class="px-4 py-2 rounded-lg font-medium transition-colors capitalize"
+        x-text="tag"></button>
+    </template>
+  </div>
+
+  <!-- Photo Grid -->
+  <div
+    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+  >
+    <template x-for="photo in filteredPhotos">
+      <div
+        @click="openLightbox(photo)"
+        class="relative aspect-square overflow-hidden rounded-lg cursor-pointer group bg-gray-100"
+      >
+        <img
+          x-bind:src="photo.src"
+          x-bind:alt="photo.alt"
+          class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+          loading="lazy"
+        />
+        <div
+          class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-opacity duration-300 flex items-end p-4"
+        >
+          <p
+            x-show="photo.title"
+            x-text="photo.title"
+            class="text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          >
+          </p>
+        </div>
+      </div>
+    </template>
+  </div>
+
+  <!-- Lightbox -->
+  <div
+    x-show="lightboxOpen"
+    x-transition:enter="transition ease-out duration-300"
+    x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100"
+    x-transition:leave="transition ease-in duration-200"
+    x-transition:leave-start="opacity-100"
+    x-transition:leave-end="opacity-0"
+    @click="closeLightbox()"
+    @keyup.escape.window="closeLightbox()"
+    class="fixed inset-0 z-50 bg-black bg-opacity-95 flex items-center justify-center p-4"
+    style="display: none;"
+  >
+    <button
+      @click.stop="closeLightbox()"
+      class="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-10"
+      aria-label="Close lightbox"
+    >
+      <svg
+        class="w-8 h-8"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+
+    <button
+      @click.stop="prevPhoto()"
+      class="absolute left-4 text-white hover:text-gray-300 transition-colors z-10"
+      aria-label="Previous photo"
+    >
+      <svg
+        class="w-10 h-10"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M15 19l-7-7 7-7"></path>
+      </svg>
+    </button>
+
+    <button
+      @click.stop="nextPhoto()"
+      class="absolute right-4 text-white hover:text-gray-300 transition-colors z-10"
+      aria-label="Next photo"
+    >
+      <svg
+        class="w-10 h-10"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 5l7 7-7 7"></path>
+      </svg>
+    </button>
+
+    <div
+      @click.stop
+      class="relative max-w-5xl max-h-[90vh] flex flex-col items-center"
+      x-show="selectedPhoto"
+    >
+      <img
+        x-show="selectedPhoto"
+        :src="selectedPhoto?.src"
+        :alt="selectedPhoto?.alt"
+        class="max-w-full max-h-[80vh] object-contain rounded-lg"
+      />
+      <div class="mt-4 text-white text-center">
+        <h3
+          x-show="selectedPhoto?.title"
+          x-text="selectedPhoto?.title"
+          class="text-xl font-semibold"
+        >
+        </h3>
+        <p
+          x-show="selectedPhoto?.tags && selectedPhoto.tags.length > 0"
+          class="mt-2 text-sm text-gray-300"
+        >
+          <template x-for="tag in selectedPhoto?.tags || []">
+            <span
+              class="inline-block bg-gray-700 rounded-full px-3 py-1 text-xs mr-2 capitalize"
+              x-text="tag"></span>
+          </template>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div
+    x-show="filteredPhotos.length === 0"
+    class="text-center py-12 text-gray-500"
+  >
+    <p class="text-xl">No photos found for this tag</p>
+  </div>
+</div>

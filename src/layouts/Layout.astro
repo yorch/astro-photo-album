@@ -13,6 +13,13 @@ import "../styles/global.css";
   </head>
   <body>
     <slot />
+    <script>
+      import Alpine from "alpinejs";
+
+      // Initialize Alpine.js
+      window.Alpine = Alpine;
+      Alpine.start();
+    </script>
   </body>
 </html>
 
