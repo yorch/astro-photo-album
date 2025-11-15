@@ -19,13 +19,16 @@ A full-featured photo gallery component with filtering, lightbox, and navigation
 **Features:**
 
 - Tag-based filtering
-- Responsive masonry grid layout
+- Multiple layout modes (masonry, grid, list)
+- Layout preference persisted to localStorage
+- Responsive design across all layouts
 - Lightbox with keyboard navigation (arrow keys, ESC)
 - Download full-size photos
 - Optimized thumbnails for fast loading
+- Intelligent lazy loading with IntersectionObserver
+- Smart prefetching based on scroll direction
 - Click outside to close
 - Smooth transitions
-- Lazy loading
 
 **Usage:**
 
@@ -50,6 +53,11 @@ const photos = [
 
 **Interactive Features:**
 
+- **Layout Switching**: Toggle between masonry, grid, and list layouts
+  - Masonry: Variable height columns for optimal space usage
+  - Grid: Uniform square tiles in responsive grid
+  - List: Horizontal cards with prominent metadata
+  - Preference saved automatically to localStorage
 - **Filtering**: Click tag buttons to filter photos
 - **Lightbox**: Click any photo to open in lightbox
 - **Navigation**:
@@ -163,9 +171,13 @@ x-data="{
 ```javascript
 x-data="{
   liked: $persist(false).as('unique-key'),
-  preferences: $persist({}).as('user-prefs')
+  preferences: $persist({}).as('user-prefs'),
+  layoutMode: $persist('masonry').as('photo-gallery-layout')
 }"
 ```
+
+**PhotoGallery Layout Persistence:**
+The gallery automatically saves your preferred layout mode (masonry, grid, or list) to localStorage. Your choice persists across sessions and applies to all albums.
 
 ## Best Practices
 
@@ -176,12 +188,40 @@ x-data="{
 5. **Event modifiers**: Use `.stop`, `.prevent`, `.outside` for better control
 6. **Keyboard accessibility**: Add keyboard handlers for interactive elements
 
-## Performance Tips
+## Performance Optimization
+
+### Intelligent Lazy Loading
+
+The PhotoGallery component implements advanced lazy loading with IntersectionObserver:
+
+**How it works:**
+
+1. **Placeholder Images**: Initially loads lightweight SVG placeholders (< 1KB each)
+2. **Viewport Detection**: IntersectionObserver monitors when images are near viewport
+3. **Smart Prefetching**: Loads images 200px before they enter viewport
+4. **Scroll-Based Prediction**: Tracks scroll direction and prefetches upcoming images
+5. **Aggressive Caching**: When scrolling stops, prefetches all nearby images (400px range)
+
+**Prefetching Strategy:**
+
+- Scrolling **down**: Prefetches 3 images ahead
+- Scrolling **up**: Prefetches 2 images above
+- **Stopped scrolling**: Prefetches all images within 400px of viewport
+- **Lightbox navigation**: Preloads next/previous full-size images
+
+**Performance Benefits:**
+
+- Initial page load: Only loads visible images
+- Reduced bandwidth: 142 photos × 15KB = ~2MB saved on initial load
+- Smooth scrolling: Images ready before user reaches them
+- Smart resource usage: Adapts to user behavior
+
+### General Performance Tips
 
 - Use `x-show` for frequently toggled elements (keeps in DOM)
 - Use `x-if` for conditional rendering (adds/removes from DOM)
-- Add `loading="lazy"` to images
 - Use `@click.stop` to prevent event bubbling when needed
+- Thumbnails are 253x smaller than originals (15KB vs 3.8MB)
 
 ## Browser Support
 

@@ -5,11 +5,13 @@ A modern photo album application built with Astro, Alpine.js, and Tailwind CSS.
 ## ✨ Features
 
 - 📸 Interactive photo galleries with filtering and tag support
-- 🎨 Responsive masonry grid layouts with Tailwind CSS
+- 🎨 Multiple layout modes: masonry, grid, and list views
+- 💫 Layout preference persisted across sessions
 - ⚡ Lightweight Alpine.js-powered interactivity (only 15kb)
 - 🖼️ Full-featured lightbox with keyboard navigation
 - 💾 Download full-size photos directly from lightbox
 - 🚀 Optimized thumbnails for fast loading (253x smaller)
+- 🧠 Intelligent lazy loading with scroll-based prefetching
 - 📊 EXIF metadata display (camera, lens, settings, location)
 - 🏷️ Tag-based photo filtering
 - ⌨️ Keyboard shortcuts (arrows, ESC)
