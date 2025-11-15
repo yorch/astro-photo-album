@@ -21,6 +21,7 @@ A full-featured photo gallery component with filtering, lightbox, and navigation
 - Tag-based filtering
 - Multiple layout modes (masonry, grid, list)
 - Layout preference persisted to localStorage
+- Theme support (light/dark/auto modes)
 - Responsive design across all layouts
 - Lightbox with keyboard navigation (arrow keys, ESC)
 - Download full-size photos
@@ -68,6 +69,26 @@ const photos = [
   - Click outside the lightbox OR
   - Click X button OR
   - Press ESC key
+
+### ThemeSwitcher
+
+A global theme selector for switching between light, dark, and auto modes.
+
+**Features:**
+
+- Three theme modes: Light, Dark, and Auto
+- Theme preference persisted to localStorage
+- Fixed position in top-right corner
+- Responsive design (icons only on mobile, labels on desktop)
+- Smooth theme transitions
+- Auto mode respects system preferences
+
+**Interactive Features:**
+
+- **Theme Selection**: Click theme button to switch modes
+- **Visual Feedback**: Active theme highlighted with gradient
+- **Persistence**: Theme choice saved automatically
+- **Global Application**: Theme applies to all pages instantly
 
 ### PhotoCard
 
@@ -178,6 +199,9 @@ x-data="{
 
 **PhotoGallery Layout Persistence:**
 The gallery automatically saves your preferred layout mode (masonry, grid, or list) to localStorage. Your choice persists across sessions and applies to all albums.
+
+**Theme Persistence:**
+The application automatically saves your preferred theme (light, dark, or auto) to localStorage. Your theme choice persists across sessions and applies globally to all pages. The theme switcher is accessible from the fixed top-right corner on all pages.
 
 ## Best Practices
 

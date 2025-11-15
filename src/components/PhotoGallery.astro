@@ -50,9 +50,9 @@ const photosData = photos.map((photo, index) => ({
 
     get photoCardClasses() {
       const cardClasses = {
-        masonry: 'relative break-inside-avoid mb-4 overflow-hidden rounded-xl cursor-pointer group bg-slate-100 shadow-md hover:shadow-2xl transition-all duration-300',
-        grid: 'relative overflow-hidden rounded-xl cursor-pointer group bg-slate-100 shadow-md hover:shadow-2xl transition-all duration-300 aspect-square',
-        list: 'relative overflow-hidden rounded-xl cursor-pointer group bg-slate-100 shadow-md hover:shadow-2xl transition-all duration-300 flex flex-row h-48'
+        masonry: 'relative break-inside-avoid mb-4 overflow-hidden rounded-xl cursor-pointer group bg-slate-100 dark:bg-slate-800 shadow-md hover:shadow-2xl transition-all duration-300',
+        grid: 'relative overflow-hidden rounded-xl cursor-pointer group bg-slate-100 dark:bg-slate-800 shadow-md hover:shadow-2xl transition-all duration-300 aspect-square',
+        list: 'relative overflow-hidden rounded-xl cursor-pointer group bg-slate-100 dark:bg-slate-800 shadow-md hover:shadow-2xl transition-all duration-300 flex flex-row h-48'
       };
       return cardClasses[this.layoutMode] || cardClasses.masonry;
     },
@@ -173,7 +173,7 @@ const photosData = photos.map((photo, index) => ({
           @click="selectedTag = tag"
           x-bind:class="{
             'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/50 scale-105': selectedTag === tag,
-            'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:shadow-md': selectedTag !== tag
+            'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 hover:shadow-md': selectedTag !== tag
           }"
           class="px-5 py-2.5 rounded-full font-medium transition-all duration-200 capitalize text-sm"
           x-text="tag"></button>
@@ -181,12 +181,14 @@ const photosData = photos.map((photo, index) => ({
     </div>
 
     <!-- Layout Switcher -->
-    <div class="flex gap-2 bg-slate-100 rounded-lg p-1">
+    <div
+      class="flex gap-2 bg-slate-100 dark:bg-slate-800 rounded-lg p-1 border border-slate-200 dark:border-slate-700"
+    >
       <button
         @click="layoutMode = 'masonry'"
         x-bind:class="{
-          'bg-white shadow-md': layoutMode === 'masonry',
-          'hover:bg-slate-200': layoutMode !== 'masonry'
+          'bg-white dark:bg-slate-700 shadow-md': layoutMode === 'masonry',
+          'hover:bg-slate-200 dark:hover:bg-slate-700': layoutMode !== 'masonry'
         }"
         class="px-3 py-2 rounded-md transition-all duration-200"
         title="Masonry layout"
@@ -209,8 +211,8 @@ const photosData = photos.map((photo, index) => ({
       <button
         @click="layoutMode = 'grid'"
         x-bind:class="{
-          'bg-white shadow-md': layoutMode === 'grid',
-          'hover:bg-slate-200': layoutMode !== 'grid'
+          'bg-white dark:bg-slate-700 shadow-md': layoutMode === 'grid',
+          'hover:bg-slate-200 dark:hover:bg-slate-700': layoutMode !== 'grid'
         }"
         class="px-3 py-2 rounded-md transition-all duration-200"
         title="Grid layout"
@@ -233,8 +235,8 @@ const photosData = photos.map((photo, index) => ({
       <button
         @click="layoutMode = 'list'"
         x-bind:class="{
-          'bg-white shadow-md': layoutMode === 'list',
-          'hover:bg-slate-200': layoutMode !== 'list'
+          'bg-white dark:bg-slate-700 shadow-md': layoutMode === 'list',
+          'hover:bg-slate-200 dark:hover:bg-slate-700': layoutMode !== 'list'
         }"
         class="px-3 py-2 rounded-md transition-all duration-200"
         title="List layout"
@@ -274,7 +276,7 @@ const photosData = photos.map((photo, index) => ({
           <p
             x-show="photo.title"
             x-text="photo.title"
-            x-bind:class="layoutMode === 'list' ? 'text-slate-900 font-semibold text-xl mb-2' : 'text-white font-semibold text-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300'"
+            x-bind:class="layoutMode === 'list' ? 'text-slate-900 dark:text-slate-100 font-semibold text-xl mb-2' : 'text-white font-semibold text-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300'"
           >
           </p>
           <div
@@ -476,7 +478,7 @@ const photosData = photos.map((photo, index) => ({
   <!-- Empty State -->
   <div
     x-show="filteredPhotos.length === 0"
-    class="text-center py-12 text-gray-500"
+    class="text-center py-12 text-gray-500 dark:text-gray-400"
   >
     <p class="text-xl">No photos found for this tag</p>
   </div>

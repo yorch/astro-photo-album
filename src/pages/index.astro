@@ -10,20 +10,20 @@ const { albums } = albumData;
 
 <Layout>
   <div
-    class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-cyan-50/20"
+    class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-cyan-50/20 dark:from-slate-900 dark:via-blue-950/30 dark:to-cyan-950/20"
   >
     <!-- Header -->
     <header
-      class="bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-sm"
+      class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-slate-200/60 dark:border-slate-700/60 shadow-sm"
     >
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div class="text-center">
           <h1
-            class="text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-cyan-900 bg-clip-text text-transparent"
+            class="text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-cyan-900 dark:from-slate-100 dark:via-blue-100 dark:to-cyan-100 bg-clip-text text-transparent"
           >
             Photo Albums
           </h1>
-          <p class="mt-4 text-lg text-slate-600">
+          <p class="mt-4 text-lg text-slate-600 dark:text-slate-400">
             Browse through {albums.length}
             {albums.length === 1 ? "collection" : "collections"}
           </p>
@@ -49,17 +49,19 @@ const { albums } = albumData;
                 d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
-            <h3 class="mt-4 text-lg font-medium text-gray-900">
+            <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">
               No albums yet
             </h3>
-            <p class="mt-2 text-gray-600">
+            <p class="mt-2 text-gray-600 dark:text-gray-400">
               Add photos to the{" "}
-              <code class="bg-gray-100 px-2 py-1 rounded">public/albums/</code>{" "}
+              <code class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
+                public/albums/
+              </code>{" "}
               directory
             </p>
-            <p class="mt-2 text-sm text-gray-500">
+            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
               See{" "}
-              <code class="bg-gray-100 px-2 py-1 rounded">
+              <code class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
                 public/albums/README.md
               </code>{" "}
               for instructions

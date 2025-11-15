@@ -1,9 +1,23 @@
 ---
 import "../styles/global.css";
+import ThemeSwitcher from "../components/ThemeSwitcher.astro";
 ---
 
 <!doctype html>
-<html lang="en">
+<html
+  lang="en"
+  x-data="{ theme: $persist('light').as('app-theme') }"
+  x-bind:class="theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme"
+  x-init="
+    if (theme === 'auto') {
+      const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      darkModeQuery.addEventListener('change', (e) => {
+        $el.classList.toggle('dark', e.matches);
+        $el.classList.toggle('light', !e.matches);
+      });
+    }
+  "
+>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
@@ -11,7 +25,10 @@ import "../styles/global.css";
     <meta name="generator" content={Astro.generator} />
     <title>Photo Album</title>
   </head>
-  <body>
+  <body
+    class="bg-gray-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-200"
+  >
+    <ThemeSwitcher />
     <slot />
     <script>
       import intersect from "@alpinejs/intersect";
