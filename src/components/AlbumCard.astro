@@ -4,10 +4,11 @@ interface Props {
   title: string;
   description: string | null;
   coverPhoto: string | null;
+  coverPhotoThumbnail: string | null;
   photoCount: number;
 }
 
-const { id, title, description, coverPhoto, photoCount } = Astro.props;
+const { id, title, description, coverPhotoThumbnail, photoCount } = Astro.props;
 ---
 
 <a
@@ -18,11 +19,12 @@ const { id, title, description, coverPhoto, photoCount } = Astro.props;
     class="aspect-square overflow-hidden bg-gradient-to-br from-slate-100 to-blue-50 relative"
   >
     {
-      coverPhoto ? (
+      coverPhotoThumbnail ? (
         <img
-          src={coverPhoto}
+          src={coverPhotoThumbnail}
           alt={title}
           class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          loading="lazy"
         />
       ) : (
         <div class="w-full h-full flex items-center justify-center text-slate-300">

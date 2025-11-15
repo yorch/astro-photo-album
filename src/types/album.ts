@@ -14,6 +14,7 @@ export interface ExifData {
 export interface Photo {
   filename: string;
   url: string;
+  thumbnailUrl: string;
   title: string | null;
   caption: string | null;
   tags: string[];
@@ -26,6 +27,7 @@ export interface Album {
   title: string;
   description: string | null;
   coverPhoto: string | null;
+  coverPhotoThumbnail: string | null;
   photoCount: number;
   photos: Photo[];
 }

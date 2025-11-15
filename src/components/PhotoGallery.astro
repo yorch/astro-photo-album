@@ -17,6 +17,7 @@ const photosData = photos.map((photo, index) => ({
   id: `${albumId || "photo"}-${index}`,
   src: photo.url,
   tags: photo.tags,
+  thumbnailSrc: photo.thumbnailUrl,
   title: photo.title,
 }));
 ---
@@ -100,7 +101,7 @@ const photosData = photos.map((photo, index) => ({
         class="relative break-inside-avoid mb-4 overflow-hidden rounded-xl cursor-pointer group bg-slate-100 shadow-md hover:shadow-2xl transition-all duration-300"
       >
         <img
-          x-bind:src="photo.src"
+          x-bind:src="photo.thumbnailSrc"
           x-bind:alt="photo.alt"
           class="w-full object-cover transition-transform duration-500 group-hover:scale-105"
           loading="lazy"
