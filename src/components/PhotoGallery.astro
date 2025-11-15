@@ -79,43 +79,51 @@ const photosData = photos.map((photo, index) => ({
   class="w-full"
 >
   <!-- Tag Filter -->
-  <div class="mb-6 flex flex-wrap gap-2">
+  <div class="mb-8 flex flex-wrap gap-3">
     <template x-for="tag in availableTags">
       <button
         @click="selectedTag = tag"
         x-bind:class="{
-          'bg-blue-600 text-white': selectedTag === tag,
-          'bg-gray-200 text-gray-800 hover:bg-gray-300': selectedTag !== tag
+          'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/50 scale-105': selectedTag === tag,
+          'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:shadow-md': selectedTag !== tag
         }"
-        class="px-4 py-2 rounded-lg font-medium transition-colors capitalize"
+        class="px-5 py-2.5 rounded-full font-medium transition-all duration-200 capitalize text-sm"
         x-text="tag"></button>
     </template>
   </div>
 
-  <!-- Photo Grid -->
-  <div
-    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
-  >
+  <!-- Photo Grid - Masonry Layout -->
+  <div class="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4">
     <template x-for="photo in filteredPhotos">
       <div
         @click="openLightbox(photo)"
-        class="relative aspect-square overflow-hidden rounded-lg cursor-pointer group bg-gray-100"
+        class="relative break-inside-avoid mb-4 overflow-hidden rounded-xl cursor-pointer group bg-slate-100 shadow-md hover:shadow-2xl transition-all duration-300"
       >
         <img
           x-bind:src="photo.src"
           x-bind:alt="photo.alt"
-          class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+          class="w-full object-cover transition-transform duration-500 group-hover:scale-105"
           loading="lazy"
         />
         <div
-          class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-opacity duration-300 flex items-end p-4"
+          class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4"
         >
           <p
             x-show="photo.title"
             x-text="photo.title"
-            class="text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            class="text-white font-semibold text-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300"
           >
           </p>
+          <div
+            x-show="photo.tags && photo.tags.length > 0"
+            class="flex flex-wrap gap-1.5 mt-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 delay-75"
+          >
+            <template x-for="tag in photo.tags?.slice(0, 3) || []">
+              <span
+                class="inline-block bg-blue-500/80 backdrop-blur-sm rounded-full px-2 py-0.5 text-xs text-white capitalize"
+                x-text="tag"></span>
+            </template>
+          </div>
         </div>
       </div>
     </template>

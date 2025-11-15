@@ -9,15 +9,25 @@ const { albums } = albumData;
 ---
 
 <Layout>
-  <div class="min-h-screen bg-gray-50">
+  <div
+    class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-cyan-50/20"
+  >
     <!-- Header -->
-    <header class="bg-white shadow-sm">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <h1 class="text-3xl font-bold text-gray-900">Photo Albums</h1>
-        <p class="mt-2 text-gray-600">
-          Browse through {albums.length}
-          {albums.length === 1 ? "album" : "albums"}
-        </p>
+    <header
+      class="bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-sm"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="text-center">
+          <h1
+            class="text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-cyan-900 bg-clip-text text-transparent"
+          >
+            Photo Albums
+          </h1>
+          <p class="mt-4 text-lg text-slate-600">
+            Browse through {albums.length}
+            {albums.length === 1 ? "collection" : "collections"}
+          </p>
+        </div>
       </div>
     </header>
 
