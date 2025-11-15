@@ -1,3 +1,26 @@
 @import 'tailwindcss';
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* Typography improvements */
+@theme {
+  --font-family-display: ui-rounded, 'SF Pro Rounded', system-ui, sans-serif;
+  --font-family-body: system-ui, -apple-system, sans-serif;
+
+  /* Enhanced spacing scale */
+  --spacing-18: 4.5rem;
+  --spacing-22: 5.5rem;
+  --spacing-26: 6.5rem;
+
+  /* Playful animations */
+  --transition-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* Dark mode color enhancements */
+  --color-dark-bg-primary: rgb(15 23 42);
+  --color-dark-bg-secondary: rgb(30 41 59);
+  --color-dark-text-primary: rgb(248 250 252);
+  --color-dark-text-secondary: rgb(203 213 225);
+  --color-dark-accent-purple: rgb(192 132 252);
+  --color-dark-accent-blue: rgb(96 165 250);
+  --color-dark-accent-cyan: rgb(103 232 249);
+}

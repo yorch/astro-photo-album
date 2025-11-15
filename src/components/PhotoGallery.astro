@@ -50,9 +50,9 @@ const photosData = photos.map((photo, index) => ({
 
     get photoCardClasses() {
       const cardClasses = {
-        masonry: 'relative break-inside-avoid mb-4 overflow-hidden rounded-xl cursor-pointer group bg-slate-100 dark:bg-slate-800 shadow-md hover:shadow-2xl transition-all duration-300',
-        grid: 'relative overflow-hidden rounded-xl cursor-pointer group bg-slate-100 dark:bg-slate-800 shadow-md hover:shadow-2xl transition-all duration-300 aspect-square',
-        list: 'relative overflow-hidden rounded-xl cursor-pointer group bg-slate-100 dark:bg-slate-800 shadow-md hover:shadow-2xl transition-all duration-300 flex flex-row h-48'
+        masonry: 'relative break-inside-avoid mb-4 overflow-hidden rounded-2xl cursor-pointer group bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:-rotate-1 border border-slate-200/50 dark:border-slate-700/50',
+        grid: 'relative overflow-hidden rounded-2xl cursor-pointer group bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 shadow-lg hover:shadow-2xl transition-all duration-500 aspect-square hover:scale-105 border border-slate-200/50 dark:border-slate-700/50',
+        list: 'relative overflow-hidden rounded-2xl cursor-pointer group bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 shadow-lg hover:shadow-2xl transition-all duration-500 flex flex-row h-52 hover:scale-[1.01] border border-slate-200/50 dark:border-slate-700/50'
       };
       return cardClasses[this.layoutMode] || cardClasses.masonry;
     },
@@ -172,25 +172,25 @@ const photosData = photos.map((photo, index) => ({
         <button
           @click="selectedTag = tag"
           x-bind:class="{
-            'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/50 scale-105': selectedTag === tag,
-            'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 hover:shadow-md': selectedTag !== tag
+            'bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 text-white shadow-lg shadow-purple-500/30 scale-110 -rotate-1': selectedTag === tag,
+            'bg-gradient-to-r from-slate-100 to-slate-50 dark:from-slate-700 dark:to-slate-800 text-slate-700 dark:text-slate-300 hover:bg-gradient-to-r hover:from-slate-200 hover:to-slate-100 dark:hover:from-slate-600 dark:hover:to-slate-700 hover:shadow-md hover:scale-105 border border-slate-200 dark:border-slate-600': selectedTag !== tag
           }"
-          class="px-5 py-2.5 rounded-full font-medium transition-all duration-200 capitalize text-sm"
+          class="px-6 py-3 rounded-full font-bold transition-all duration-300 capitalize text-sm shadow-md"
           x-text="tag"></button>
       </template>
     </div>
 
     <!-- Layout Switcher -->
     <div
-      class="flex gap-2 bg-slate-100 dark:bg-slate-800 rounded-lg p-1 border border-slate-200 dark:border-slate-700"
+      class="flex gap-2 bg-gradient-to-r from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-xl p-1.5 border-2 border-slate-200 dark:border-slate-700 shadow-md"
     >
       <button
         @click="layoutMode = 'masonry'"
         x-bind:class="{
-          'bg-white dark:bg-slate-700 shadow-md': layoutMode === 'masonry',
-          'hover:bg-slate-200 dark:hover:bg-slate-700': layoutMode !== 'masonry'
+          'bg-gradient-to-br from-purple-500 to-blue-500 text-white shadow-lg scale-110': layoutMode === 'masonry',
+          'hover:bg-slate-200 dark:hover:bg-slate-700 hover:scale-105': layoutMode !== 'masonry'
         }"
-        class="px-3 py-2 rounded-md transition-all duration-200"
+        class="px-3 py-2 rounded-lg transition-all duration-300"
         title="Masonry layout"
         aria-label="Switch to masonry layout"
       >
@@ -211,10 +211,10 @@ const photosData = photos.map((photo, index) => ({
       <button
         @click="layoutMode = 'grid'"
         x-bind:class="{
-          'bg-white dark:bg-slate-700 shadow-md': layoutMode === 'grid',
-          'hover:bg-slate-200 dark:hover:bg-slate-700': layoutMode !== 'grid'
+          'bg-gradient-to-br from-purple-500 to-blue-500 text-white shadow-lg scale-110': layoutMode === 'grid',
+          'hover:bg-slate-200 dark:hover:bg-slate-700 hover:scale-105': layoutMode !== 'grid'
         }"
-        class="px-3 py-2 rounded-md transition-all duration-200"
+        class="px-3 py-2 rounded-lg transition-all duration-300"
         title="Grid layout"
         aria-label="Switch to grid layout"
       >
@@ -235,10 +235,10 @@ const photosData = photos.map((photo, index) => ({
       <button
         @click="layoutMode = 'list'"
         x-bind:class="{
-          'bg-white dark:bg-slate-700 shadow-md': layoutMode === 'list',
-          'hover:bg-slate-200 dark:hover:bg-slate-700': layoutMode !== 'list'
+          'bg-gradient-to-br from-purple-500 to-blue-500 text-white shadow-lg scale-110': layoutMode === 'list',
+          'hover:bg-slate-200 dark:hover:bg-slate-700 hover:scale-105': layoutMode !== 'list'
         }"
-        class="px-3 py-2 rounded-md transition-all duration-200"
+        class="px-3 py-2 rounded-lg transition-all duration-300"
         title="List layout"
         aria-label="Switch to list layout"
       >
@@ -307,7 +307,7 @@ const photosData = photos.map((photo, index) => ({
     @keyup.escape.window="closeLightbox()"
     @keyup.arrow-left.window="lightboxOpen && prevPhoto()"
     @keyup.arrow-right.window="lightboxOpen && nextPhoto()"
-    class="fixed inset-0 z-50 bg-black bg-opacity-95 flex items-center justify-center p-4"
+    class="fixed inset-0 z-50 bg-gradient-to-br from-slate-900/98 via-purple-900/95 to-blue-900/98 backdrop-blur-xl flex items-center justify-center p-4"
     style="display: none;"
   >
     <!-- Download Button -->
@@ -316,7 +316,7 @@ const photosData = photos.map((photo, index) => ({
       :href="selectedPhoto?.src"
       :download="selectedPhoto?.filename"
       @click.stop
-      class="absolute top-4 right-16 text-white hover:text-blue-400 transition-colors z-10 bg-black/30 hover:bg-black/50 rounded-full p-2 backdrop-blur-sm"
+      class="absolute top-6 right-20 text-white hover:text-cyan-400 transition-all duration-300 z-10 bg-gradient-to-br from-purple-500/40 to-blue-500/40 hover:from-purple-500/60 hover:to-blue-500/60 rounded-full p-3 backdrop-blur-md shadow-lg hover:scale-110"
       aria-label="Download photo"
       title="Download full size"
     >
@@ -338,7 +338,7 @@ const photosData = photos.map((photo, index) => ({
     <!-- Close Button -->
     <button
       @click.stop="closeLightbox()"
-      class="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-10"
+      class="absolute top-6 right-6 text-white hover:text-red-400 transition-all duration-300 z-10 bg-gradient-to-br from-slate-700/40 to-slate-800/40 hover:from-red-500/40 hover:to-red-600/40 rounded-full p-3 backdrop-blur-md shadow-lg hover:scale-110 hover:rotate-90"
       aria-label="Close lightbox"
     >
       <svg
@@ -357,7 +357,7 @@ const photosData = photos.map((photo, index) => ({
 
     <button
       @click.stop="prevPhoto()"
-      class="absolute left-4 text-white hover:text-gray-300 transition-colors z-10"
+      class="absolute left-6 text-white hover:text-purple-400 transition-all duration-300 z-10 bg-gradient-to-br from-slate-700/40 to-slate-800/40 hover:from-purple-500/60 hover:to-blue-500/60 rounded-full p-4 backdrop-blur-md shadow-lg hover:scale-125 hover:-translate-x-1"
       aria-label="Previous photo"
     >
       <svg
@@ -376,7 +376,7 @@ const photosData = photos.map((photo, index) => ({
 
     <button
       @click.stop="nextPhoto()"
-      class="absolute right-4 text-white hover:text-gray-300 transition-colors z-10"
+      class="absolute right-6 text-white hover:text-cyan-400 transition-all duration-300 z-10 bg-gradient-to-br from-slate-700/40 to-slate-800/40 hover:from-purple-500/60 hover:to-blue-500/60 rounded-full p-4 backdrop-blur-md shadow-lg hover:scale-125 hover:translate-x-1"
       aria-label="Next photo"
     >
       <svg
@@ -410,13 +410,13 @@ const photosData = photos.map((photo, index) => ({
           <h3
             x-show="selectedPhoto?.title"
             x-text="selectedPhoto?.title"
-            class="text-xl font-semibold"
+            class="text-3xl font-bold bg-gradient-to-r from-purple-300 via-blue-300 to-cyan-300 bg-clip-text text-transparent"
           >
           </h3>
           <p
             x-show="selectedPhoto?.caption"
             x-text="selectedPhoto?.caption"
-            class="mt-2 text-sm text-gray-300"
+            class="mt-3 text-base text-gray-200 leading-relaxed"
           >
           </p>
         </div>
@@ -424,38 +424,70 @@ const photosData = photos.map((photo, index) => ({
         <!-- EXIF Metadata -->
         <div
           x-show="selectedPhoto?.exif && (selectedPhoto.exif.camera || selectedPhoto.exif.dateTime)"
-          class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs bg-black/30 rounded-lg p-4"
+          class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm bg-gradient-to-br from-slate-900/60 to-purple-900/40 backdrop-blur-md rounded-2xl p-6 border border-purple-500/20 shadow-xl"
         >
           <div x-show="selectedPhoto?.exif?.dateTime">
-            <div class="text-gray-400">Date</div>
+            <div
+              class="text-purple-300 font-semibold text-xs uppercase tracking-wider mb-1"
+            >
+              Date
+            </div>
             <div x-text="selectedPhoto?.exif?.dateTime"></div>
           </div>
           <div x-show="selectedPhoto?.exif?.camera">
-            <div class="text-gray-400">Camera</div>
+            <div
+              class="text-blue-300 font-semibold text-xs uppercase tracking-wider mb-1"
+            >
+              Camera
+            </div>
             <div x-text="selectedPhoto?.exif?.camera"></div>
           </div>
           <div x-show="selectedPhoto?.exif?.lens">
-            <div class="text-gray-400">Lens</div>
+            <div
+              class="text-cyan-300 font-semibold text-xs uppercase tracking-wider mb-1"
+            >
+              Lens
+            </div>
             <div x-text="selectedPhoto?.exif?.lens"></div>
           </div>
           <div x-show="selectedPhoto?.exif?.focalLength">
-            <div class="text-gray-400">Focal Length</div>
+            <div
+              class="text-purple-300 font-semibold text-xs uppercase tracking-wider mb-1"
+            >
+              $1
+            </div>
             <div x-text="selectedPhoto?.exif?.focalLength"></div>
           </div>
           <div x-show="selectedPhoto?.exif?.aperture">
-            <div class="text-gray-400">Aperture</div>
+            <div
+              class="text-purple-300 font-semibold text-xs uppercase tracking-wider mb-1"
+            >
+              $1
+            </div>
             <div x-text="selectedPhoto?.exif?.aperture"></div>
           </div>
           <div x-show="selectedPhoto?.exif?.shutterSpeed">
-            <div class="text-gray-400">Shutter</div>
+            <div
+              class="text-purple-300 font-semibold text-xs uppercase tracking-wider mb-1"
+            >
+              $1
+            </div>
             <div x-text="selectedPhoto?.exif?.shutterSpeed"></div>
           </div>
           <div x-show="selectedPhoto?.exif?.iso">
-            <div class="text-gray-400">ISO</div>
+            <div
+              class="text-purple-300 font-semibold text-xs uppercase tracking-wider mb-1"
+            >
+              $1
+            </div>
             <div x-text="selectedPhoto?.exif?.iso"></div>
           </div>
           <div x-show="selectedPhoto?.exif?.location">
-            <div class="text-gray-400">Location</div>
+            <div
+              class="text-purple-300 font-semibold text-xs uppercase tracking-wider mb-1"
+            >
+              $1
+            </div>
             <div x-text="selectedPhoto?.exif?.location"></div>
           </div>
         </div>
@@ -463,13 +495,20 @@ const photosData = photos.map((photo, index) => ({
         <!-- Tags -->
         <div
           x-show="selectedPhoto?.tags && selectedPhoto.tags.length > 0"
-          class="mt-4 text-center"
+          class="mt-6 text-center"
         >
-          <template x-for="tag in selectedPhoto?.tags || []">
-            <span
-              class="inline-block bg-gray-700 rounded-full px-3 py-1 text-xs mr-2 capitalize"
-              x-text="tag"></span>
-          </template>
+          <div
+            class="text-purple-300 font-semibold text-xs uppercase tracking-wider mb-3"
+          >
+            Tags
+          </div>
+          <div class="flex flex-wrap justify-center gap-2">
+            <template x-for="tag in selectedPhoto?.tags || []">
+              <span
+                class="inline-block bg-gradient-to-r from-purple-500/30 via-blue-500/30 to-cyan-500/30 backdrop-blur-sm border border-purple-400/30 rounded-full px-4 py-2 text-sm font-medium capitalize hover:scale-110 hover:rotate-2 transition-all duration-300 shadow-lg"
+                x-text="tag"></span>
+            </template>
+          </div>
         </div>
       </div>
     </div>
