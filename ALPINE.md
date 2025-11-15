@@ -19,8 +19,10 @@ A full-featured photo gallery component with filtering, lightbox, and navigation
 **Features:**
 
 - Tag-based filtering
-- Responsive grid layout
+- Responsive masonry grid layout
 - Lightbox with keyboard navigation (arrow keys, ESC)
+- Download full-size photos
+- Optimized thumbnails for fast loading
 - Click outside to close
 - Smooth transitions
 - Lazy loading
@@ -53,6 +55,7 @@ const photos = [
 - **Navigation**:
   - Click arrow buttons OR
   - Press ← (left arrow) / → (right arrow) keys to navigate
+- **Download**: Click download button (↓) to save full-size photo
 - **Close**:
   - Click outside the lightbox OR
   - Click X button OR
