@@ -12,6 +12,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@alpinejs/persist@npm:3.15.2":
+  version: 3.15.2
+  resolution: "@alpinejs/persist@npm:3.15.2"
+  checksum: 10c0/6885df0a067ff93eb35f0e7d2f46b771cf026516f6611e3123bd0302a87945e3feade18491140974a8e9563bdc9d89efff9a641dadfffff526f0cb64866a72ce
+  languageName: node
+  linkType: hard
+
 "@astrojs/check@npm:0.9.5":
   version: 0.9.5
   resolution: "@astrojs/check@npm:0.9.5"
@@ -1356,6 +1363,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/alpinejs__persist@npm:3.13.4":
+  version: 3.13.4
+  resolution: "@types/alpinejs__persist@npm:3.13.4"
+  dependencies:
+    "@types/alpinejs": "npm:*"
+  checksum: 10c0/45018e0a0fe57eac4fad1f7d218a3402523c791aa56b2010137745a5d0993d330a6669f9747ed705435396e7e3a82b39e8f322a391fe023c3bfcd1da63f058ad
+  languageName: node
+  linkType: hard
+
 "@types/debug@npm:^4.0.0":
   version: 4.1.12
   resolution: "@types/debug@npm:4.1.12"
@@ -1683,11 +1699,13 @@ __metadata:
   resolution: "astro-photo-album@workspace:."
   dependencies:
     "@alpinejs/intersect": "npm:3.15.2"
+    "@alpinejs/persist": "npm:3.15.2"
     "@astrojs/check": "npm:0.9.5"
     "@biomejs/biome": "npm:2.3.5"
     "@tailwindcss/vite": "npm:4.1.17"
     "@types/alpinejs": "npm:3.13.11"
     "@types/alpinejs__intersect": "npm:3.13.4"
+    "@types/alpinejs__persist": "npm:3.13.4"
     "@types/node": "npm:24.10.1"
     alpinejs: "npm:3.15.2"
     astro: "npm:5.15.8"

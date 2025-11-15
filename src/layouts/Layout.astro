@@ -15,10 +15,12 @@ import "../styles/global.css";
     <slot />
     <script>
       import intersect from "@alpinejs/intersect";
+      import persist from "@alpinejs/persist";
       import Alpine from "alpinejs";
 
       // Register Alpine plugins
       Alpine.plugin(intersect);
+      Alpine.plugin(persist);
 
       // Initialize Alpine.js
       window.Alpine = Alpine;

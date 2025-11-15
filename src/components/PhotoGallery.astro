@@ -31,11 +31,39 @@ const photosData = photos.map((photo, index) => ({
     availableTags: [],
     scrollDirection: 'down',
     lastScrollY: 0,
+    layoutMode: $persist('masonry').as('photo-gallery-layout'),
 
     init() {
       this.photos = JSON.parse(this.$el.dataset.photos);
       this.availableTags = this.extractTags();
       this.setupScrollTracking();
+    },
+
+    get layoutClasses() {
+      const layouts = {
+        masonry: 'columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4',
+        grid: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4',
+        list: 'flex flex-col gap-4 max-w-4xl mx-auto'
+      };
+      return layouts[this.layoutMode] || layouts.masonry;
+    },
+
+    get photoCardClasses() {
+      const cardClasses = {
+        masonry: 'relative break-inside-avoid mb-4 overflow-hidden rounded-xl cursor-pointer group bg-slate-100 shadow-md hover:shadow-2xl transition-all duration-300',
+        grid: 'relative overflow-hidden rounded-xl cursor-pointer group bg-slate-100 shadow-md hover:shadow-2xl transition-all duration-300 aspect-square',
+        list: 'relative overflow-hidden rounded-xl cursor-pointer group bg-slate-100 shadow-md hover:shadow-2xl transition-all duration-300 flex flex-row h-48'
+      };
+      return cardClasses[this.layoutMode] || cardClasses.masonry;
+    },
+
+    get imageClasses() {
+      const imgClasses = {
+        masonry: 'w-full object-cover transition-transform duration-500 group-hover:scale-105',
+        grid: 'w-full h-full object-cover transition-transform duration-500 group-hover:scale-105',
+        list: 'w-1/3 h-full object-cover transition-transform duration-500 group-hover:scale-105'
+      };
+      return imgClasses[this.layoutMode] || imgClasses.masonry;
     },
 
     setupScrollTracking() {
@@ -134,51 +162,128 @@ const photosData = photos.map((photo, index) => ({
   data-photos={JSON.stringify(photosData)}
   class="w-full"
 >
-  <!-- Tag Filter -->
-  <div class="mb-8 flex flex-wrap gap-3">
-    <template x-for="tag in availableTags">
+  <!-- Controls: Tag Filter & Layout Switcher -->
+  <div
+    class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+  >
+    <!-- Tag Filter -->
+    <div class="flex flex-wrap gap-3">
+      <template x-for="tag in availableTags">
+        <button
+          @click="selectedTag = tag"
+          x-bind:class="{
+            'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/50 scale-105': selectedTag === tag,
+            'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:shadow-md': selectedTag !== tag
+          }"
+          class="px-5 py-2.5 rounded-full font-medium transition-all duration-200 capitalize text-sm"
+          x-text="tag"></button>
+      </template>
+    </div>
+
+    <!-- Layout Switcher -->
+    <div class="flex gap-2 bg-slate-100 rounded-lg p-1">
       <button
-        @click="selectedTag = tag"
+        @click="layoutMode = 'masonry'"
         x-bind:class="{
-          'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/50 scale-105': selectedTag === tag,
-          'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:shadow-md': selectedTag !== tag
+          'bg-white shadow-md': layoutMode === 'masonry',
+          'hover:bg-slate-200': layoutMode !== 'masonry'
         }"
-        class="px-5 py-2.5 rounded-full font-medium transition-all duration-200 capitalize text-sm"
-        x-text="tag"></button>
-    </template>
+        class="px-3 py-2 rounded-md transition-all duration-200"
+        title="Masonry layout"
+        aria-label="Switch to masonry layout"
+      >
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3zM14 12a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1v-7z"
+          ></path>
+        </svg>
+      </button>
+      <button
+        @click="layoutMode = 'grid'"
+        x-bind:class="{
+          'bg-white shadow-md': layoutMode === 'grid',
+          'hover:bg-slate-200': layoutMode !== 'grid'
+        }"
+        class="px-3 py-2 rounded-md transition-all duration-200"
+        title="Grid layout"
+        aria-label="Switch to grid layout"
+      >
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"
+          ></path>
+        </svg>
+      </button>
+      <button
+        @click="layoutMode = 'list'"
+        x-bind:class="{
+          'bg-white shadow-md': layoutMode === 'list',
+          'hover:bg-slate-200': layoutMode !== 'list'
+        }"
+        class="px-3 py-2 rounded-md transition-all duration-200"
+        title="List layout"
+        aria-label="Switch to list layout"
+      >
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
   </div>
 
-  <!-- Photo Grid - Masonry Layout -->
-  <div class="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4">
+  <!-- Photo Gallery - Dynamic Layout -->
+  <div x-bind:class="layoutClasses">
     <template x-for="photo in filteredPhotos">
-      <div
-        @click="openLightbox(photo)"
-        class="relative break-inside-avoid mb-4 overflow-hidden rounded-xl cursor-pointer group bg-slate-100 shadow-md hover:shadow-2xl transition-all duration-300"
-      >
+      <div @click="openLightbox(photo)" x-bind:class="photoCardClasses">
         <img
           x-intersect.margin.200px="loadImage($el, photo.id, photo.thumbnailSrc)"
           x-bind:data-photo-id="photo.id"
           x-bind:data-src="photo.thumbnailSrc"
           x-bind:alt="photo.alt"
+          x-bind:class="imageClasses"
           src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%23e2e8f0'/%3E%3C/svg%3E"
-          class="w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <div
-          class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4"
+          x-bind:class="layoutMode === 'list' ? 'w-2/3 p-6 flex flex-col justify-center' : 'absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4'"
         >
           <p
             x-show="photo.title"
             x-text="photo.title"
-            class="text-white font-semibold text-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300"
+            x-bind:class="layoutMode === 'list' ? 'text-slate-900 font-semibold text-xl mb-2' : 'text-white font-semibold text-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300'"
           >
           </p>
           <div
             x-show="photo.tags && photo.tags.length > 0"
-            class="flex flex-wrap gap-1.5 mt-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 delay-75"
+            x-bind:class="layoutMode === 'list' ? 'flex flex-wrap gap-1.5' : 'flex flex-wrap gap-1.5 mt-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 delay-75'"
           >
             <template x-for="tag in photo.tags?.slice(0, 3) || []">
               <span
-                class="inline-block bg-blue-500/80 backdrop-blur-sm rounded-full px-2 py-0.5 text-xs text-white capitalize"
+                x-bind:class="layoutMode === 'list' ? 'inline-block bg-blue-500 rounded-full px-2 py-0.5 text-xs text-white capitalize' : 'inline-block bg-blue-500/80 backdrop-blur-sm rounded-full px-2 py-0.5 text-xs text-white capitalize'"
                 x-text="tag"></span>
             </template>
           </div>
