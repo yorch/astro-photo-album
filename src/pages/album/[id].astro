@@ -1,6 +1,5 @@
 ---
-import Lightbox from "../../components/Lightbox.astro";
-import PhotoGrid from "../../components/PhotoGrid.astro";
+import PhotoGallery from "../../components/PhotoGallery.astro";
 import albumDataJson from "../../data/albums.json";
 import Layout from "../../layouts/Layout.astro";
 import type { Album, AlbumData } from "../../types/album";
@@ -90,12 +89,9 @@ const { album } = Astro.props;
             </p>
           </div>
         ) : (
-          <PhotoGrid photos={album.photos} albumId={album.id} />
+          <PhotoGallery photos={album.photos} albumId={album.id} />
         )
       }
     </main>
   </div>
-
-  <!-- Lightbox component -->
-  <Lightbox />
 </Layout>

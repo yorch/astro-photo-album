@@ -1,17 +1,24 @@
 ---
-interface Photo {
-  id: string;
-  src: string;
-  alt: string;
-  tags?: string[];
-  title?: string;
-}
+import type { Photo } from "../types/album";
 
 interface Props {
   photos: Photo[];
+  albumId?: string;
 }
 
-const { photos } = Astro.props;
+const { photos, albumId } = Astro.props;
+
+// Transform photos to include necessary fields for Alpine
+const photosData = photos.map((photo, index) => ({
+  alt: photo.title || photo.filename,
+  caption: photo.caption,
+  exif: photo.exif,
+  filename: photo.filename,
+  id: `${albumId || "photo"}-${index}`,
+  src: photo.url,
+  tags: photo.tags,
+  title: photo.title,
+}));
 ---
 
 <div
@@ -68,8 +75,8 @@ const { photos } = Astro.props;
       this.selectedPhoto = this.filteredPhotos[prevIndex];
     }
   }"
-  data-photos={JSON.stringify(photos)}
-  class="w-full max-w-7xl mx-auto p-4"
+  data-photos={JSON.stringify(photosData)}
+  class="w-full"
 >
   <!-- Tag Filter -->
   <div class="mb-6 flex flex-wrap gap-2">
@@ -125,6 +132,8 @@ const { photos } = Astro.props;
     x-transition:leave-end="opacity-0"
     @click="closeLightbox()"
     @keyup.escape.window="closeLightbox()"
+    @keyup.arrow-left.window="lightboxOpen && prevPhoto()"
+    @keyup.arrow-right.window="lightboxOpen && nextPhoto()"
     class="fixed inset-0 z-50 bg-black bg-opacity-95 flex items-center justify-center p-4"
     style="display: none;"
   >
@@ -196,23 +205,73 @@ const { photos } = Astro.props;
         :alt="selectedPhoto?.alt"
         class="max-w-full max-h-[80vh] object-contain rounded-lg"
       />
-      <div class="mt-4 text-white text-center">
-        <h3
-          x-show="selectedPhoto?.title"
-          x-text="selectedPhoto?.title"
-          class="text-xl font-semibold"
+      <div class="mt-4 text-white w-full max-w-3xl">
+        <!-- Title and Caption -->
+        <div class="text-center mb-4">
+          <h3
+            x-show="selectedPhoto?.title"
+            x-text="selectedPhoto?.title"
+            class="text-xl font-semibold"
+          >
+          </h3>
+          <p
+            x-show="selectedPhoto?.caption"
+            x-text="selectedPhoto?.caption"
+            class="mt-2 text-sm text-gray-300"
+          >
+          </p>
+        </div>
+
+        <!-- EXIF Metadata -->
+        <div
+          x-show="selectedPhoto?.exif && (selectedPhoto.exif.camera || selectedPhoto.exif.dateTime)"
+          class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs bg-black/30 rounded-lg p-4"
         >
-        </h3>
-        <p
+          <div x-show="selectedPhoto?.exif?.dateTime">
+            <div class="text-gray-400">Date</div>
+            <div x-text="selectedPhoto?.exif?.dateTime"></div>
+          </div>
+          <div x-show="selectedPhoto?.exif?.camera">
+            <div class="text-gray-400">Camera</div>
+            <div x-text="selectedPhoto?.exif?.camera"></div>
+          </div>
+          <div x-show="selectedPhoto?.exif?.lens">
+            <div class="text-gray-400">Lens</div>
+            <div x-text="selectedPhoto?.exif?.lens"></div>
+          </div>
+          <div x-show="selectedPhoto?.exif?.focalLength">
+            <div class="text-gray-400">Focal Length</div>
+            <div x-text="selectedPhoto?.exif?.focalLength"></div>
+          </div>
+          <div x-show="selectedPhoto?.exif?.aperture">
+            <div class="text-gray-400">Aperture</div>
+            <div x-text="selectedPhoto?.exif?.aperture"></div>
+          </div>
+          <div x-show="selectedPhoto?.exif?.shutterSpeed">
+            <div class="text-gray-400">Shutter</div>
+            <div x-text="selectedPhoto?.exif?.shutterSpeed"></div>
+          </div>
+          <div x-show="selectedPhoto?.exif?.iso">
+            <div class="text-gray-400">ISO</div>
+            <div x-text="selectedPhoto?.exif?.iso"></div>
+          </div>
+          <div x-show="selectedPhoto?.exif?.location">
+            <div class="text-gray-400">Location</div>
+            <div x-text="selectedPhoto?.exif?.location"></div>
+          </div>
+        </div>
+
+        <!-- Tags -->
+        <div
           x-show="selectedPhoto?.tags && selectedPhoto.tags.length > 0"
-          class="mt-2 text-sm text-gray-300"
+          class="mt-4 text-center"
         >
           <template x-for="tag in selectedPhoto?.tags || []">
             <span
               class="inline-block bg-gray-700 rounded-full px-3 py-1 text-xs mr-2 capitalize"
               x-text="tag"></span>
           </template>
-        </p>
+        </div>
       </div>
     </div>
   </div>

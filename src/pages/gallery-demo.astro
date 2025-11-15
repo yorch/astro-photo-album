@@ -2,65 +2,85 @@
 import PhotoCard from "../components/PhotoCard.astro";
 import PhotoGallery from "../components/PhotoGallery.astro";
 import Layout from "../layouts/Layout.astro";
+import type { Photo } from "../types/album";
+
+// Helper to create demo photo objects
+const createDemoPhoto = (
+  filename: string,
+  url: string,
+  title: string,
+  tags: string[]
+): Photo => ({
+  caption: null,
+  exif: {
+    aperture: null,
+    camera: null,
+    dateTime: null,
+    focalLength: null,
+    height: null,
+    iso: null,
+    lens: null,
+    location: null,
+    shutterSpeed: null,
+    width: null,
+  },
+  filename,
+  fileSize: 0,
+  tags,
+  title,
+  url,
+});
 
 // Sample photos for demonstration
-const samplePhotos = [
-  {
-    alt: "Mountain landscape",
-    id: "1",
-    src: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800",
-    tags: ["nature", "landscape", "mountains"],
-    title: "Mountain Peak",
-  },
-  {
-    alt: "Forest path",
-    id: "2",
-    src: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800",
-    tags: ["nature", "forest", "landscape"],
-    title: "Forest Trail",
-  },
-  {
-    alt: "Beach sunset",
-    id: "3",
-    src: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=800",
-    tags: ["beach", "sunset", "ocean"],
-    title: "Coastal Sunset",
-  },
-  {
-    alt: "Mountain lake",
-    id: "4",
-    src: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800",
-    tags: ["nature", "lake", "mountains"],
-    title: "Alpine Lake",
-  },
-  {
-    alt: "Wildflowers",
-    id: "5",
-    src: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=800",
-    tags: ["nature", "flowers", "landscape"],
-    title: "Spring Meadow",
-  },
-  {
-    alt: "Foggy mountains",
-    id: "6",
-    src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800",
-    tags: ["nature", "mountains", "landscape"],
-    title: "Misty Peaks",
-  },
-  {
-    alt: "Forest canopy",
-    id: "7",
-    src: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800",
-    tags: ["nature", "forest"],
-    title: "Woodland Canopy",
-  },
-  {
-    alt: "Desert landscape",
-    id: "8",
-    src: "https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=800",
-    tags: ["landscape", "desert"],
-    title: "Desert Vista",
-  },
+const samplePhotos: Photo[] = [
+  createDemoPhoto(
+    "mountain-peak.jpg",
+    "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800",
+    "Mountain Peak",
+    ["nature", "landscape", "mountains"]
+  ),
+  createDemoPhoto(
+    "forest-trail.jpg",
+    "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800",
+    "Forest Trail",
+    ["nature", "forest", "landscape"]
+  ),
+  createDemoPhoto(
+    "coastal-sunset.jpg",
+    "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=800",
+    "Coastal Sunset",
+    ["beach", "sunset", "ocean"]
+  ),
+  createDemoPhoto(
+    "alpine-lake.jpg",
+    "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800",
+    "Alpine Lake",
+    ["nature", "lake", "mountains"]
+  ),
+  createDemoPhoto(
+    "spring-meadow.jpg",
+    "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=800",
+    "Spring Meadow",
+    ["nature", "flowers", "landscape"]
+  ),
+  createDemoPhoto(
+    "misty-peaks.jpg",
+    "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800",
+    "Misty Peaks",
+    ["nature", "mountains", "landscape"]
+  ),
+  createDemoPhoto(
+    "woodland-canopy.jpg",
+    "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800",
+    "Woodland Canopy",
+    ["nature", "forest"]
+  ),
+  createDemoPhoto(
+    "desert-vista.jpg",
+    "https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=800",
+    "Desert Vista",
+    ["landscape", "desert"]
+  ),
 ];
 ---
 
@@ -100,9 +120,9 @@ const samplePhotos = [
               .slice(0, 4)
               .map((photo) => (
                 <PhotoCard
-                  src={photo.src}
-                  alt={photo.alt}
-                  title={photo.title}
+                  src={photo.url}
+                  alt={photo.title || photo.filename}
+                  title={photo.title || undefined}
                   description={photo.tags?.join(", ")}
                 />
               ))

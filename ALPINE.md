@@ -50,8 +50,13 @@ const photos = [
 
 - **Filtering**: Click tag buttons to filter photos
 - **Lightbox**: Click any photo to open in lightbox
-- **Navigation**: Use arrow buttons or keyboard arrows to navigate
-- **Close**: Click outside, click X button, or press ESC
+- **Navigation**:
+  - Click arrow buttons OR
+  - Press ← (left arrow) / → (right arrow) keys to navigate
+- **Close**:
+  - Click outside the lightbox OR
+  - Click X button OR
+  - Press ESC key
 
 ### PhotoCard
 

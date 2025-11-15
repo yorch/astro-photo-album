@@ -4,13 +4,14 @@ A modern photo album application built with Astro, Alpine.js, and Tailwind CSS.
 
 ## ✨ Features
 
-- 📸 Interactive photo galleries with filtering and search
+- 📸 Interactive photo galleries with filtering and tag support
 - 🎨 Responsive grid layouts with Tailwind CSS
-- ⚡ Lightweight interactivity with Alpine.js
-- 🖼️ Lightbox viewer with keyboard navigation
-- ❤️ Persistent likes using localStorage
-- 🏷️ Tag-based filtering
-- 🎯 Zero JavaScript framework overhead (Alpine.js is only 15kb)
+- ⚡ Lightweight Alpine.js-powered interactivity (only 15kb)
+- 🖼️ Full-featured lightbox with keyboard navigation
+- 📊 EXIF metadata display (camera, lens, settings, location)
+- 🏷️ Tag-based photo filtering
+- ⌨️ Keyboard shortcuts (arrows, ESC)
+- 📱 Mobile-responsive design
 
 ## 🚀 Project Structure
 
