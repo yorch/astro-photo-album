@@ -14,7 +14,11 @@ import "../styles/global.css";
   <body>
     <slot />
     <script>
+      import intersect from "@alpinejs/intersect";
       import Alpine from "alpinejs";
+
+      // Register Alpine plugins
+      Alpine.plugin(intersect);
 
       // Initialize Alpine.js
       window.Alpine = Alpine;

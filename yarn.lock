@@ -5,6 +5,13 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
+"@alpinejs/intersect@npm:3.15.2":
+  version: 3.15.2
+  resolution: "@alpinejs/intersect@npm:3.15.2"
+  checksum: 10c0/36478329d52bf1913d63f30faa10ef0586d19f7de370d15f179d8007c738ab99fc2f96c1be3ad14c4e7705e3522b1590bb82d9b6d920f484386469192541382d
+  languageName: node
+  linkType: hard
+
 "@astrojs/check@npm:0.9.5":
   version: 0.9.5
   resolution: "@astrojs/check@npm:0.9.5"
@@ -1333,10 +1340,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/alpinejs@npm:3.13.11":
+"@types/alpinejs@npm:*, @types/alpinejs@npm:3.13.11":
   version: 3.13.11
   resolution: "@types/alpinejs@npm:3.13.11"
   checksum: 10c0/181dcff0af59211043e4121f68548bc2efabe74f71ac397bc20aac7a497f76344e8f327745e621ec5db5b4991d12834b88840ad87e7a28c4a1554930b9e32ad6
+  languageName: node
+  linkType: hard
+
+"@types/alpinejs__intersect@npm:3.13.4":
+  version: 3.13.4
+  resolution: "@types/alpinejs__intersect@npm:3.13.4"
+  dependencies:
+    "@types/alpinejs": "npm:*"
+  checksum: 10c0/3ea09995cbb62c74f920bef9d7c46c2639cb799b79658dc0f9d47ab9e54a7618723ef2cd70367c3d3a1548aaf9848d74a25d00237533beb08b5fc298a6ab3a5f
   languageName: node
   linkType: hard
 
@@ -1583,12 +1599,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"alpinejs@npm:3.15.1":
-  version: 3.15.1
-  resolution: "alpinejs@npm:3.15.1"
+"alpinejs@npm:3.15.2":
+  version: 3.15.2
+  resolution: "alpinejs@npm:3.15.2"
   dependencies:
     "@vue/reactivity": "npm:~3.1.1"
-  checksum: 10c0/4552cbdaeeba5f7cf4029e2fa5f9af7db86ce454b06f4b4169b0d23c5df76ed164455f752810e7f5d5e6603fe9836c624c7bad9abfc5a622e2ce818b9b0e2233
+  checksum: 10c0/ae60c3e5e49d61e2e4d2edf923756632899c8341426ba52d40708f631bfaaa25bfcd4df3c7f37ed820124ab8ad26bb389a3780ac588a20709a50e6fca07f46aa
   languageName: node
   linkType: hard
 
@@ -1666,12 +1682,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "astro-photo-album@workspace:."
   dependencies:
+    "@alpinejs/intersect": "npm:3.15.2"
     "@astrojs/check": "npm:0.9.5"
     "@biomejs/biome": "npm:2.3.5"
     "@tailwindcss/vite": "npm:4.1.17"
     "@types/alpinejs": "npm:3.13.11"
+    "@types/alpinejs__intersect": "npm:3.13.4"
     "@types/node": "npm:24.10.1"
-    alpinejs: "npm:3.15.1"
+    alpinejs: "npm:3.15.2"
     astro: "npm:5.15.8"
     exifreader: "npm:4.32.0"
     sharp: "npm:0.34.5"
