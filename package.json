@@ -2,6 +2,11 @@
   "name": "astro-photo-album",
   "type": "module",
   "version": "0.0.1",
+  "author": {
+    "name": "Jorge Barnaby",
+    "email": "jorge.barnaby@gmail.com"
+  },
+  "license": "MIT",
   "scripts": {
     "dev": "astro dev",
     "build": "tsx scripts/generate-album-data.ts && astro build",
