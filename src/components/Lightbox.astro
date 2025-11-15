@@ -1,0 +1,116 @@
+---
+// Lightbox component with zoom, navigation, and metadata display
+---
+
+<div id="lightbox" class="fixed inset-0 bg-black bg-opacity-95 z-50 hidden">
+  <div class="h-full flex flex-col">
+    <!-- Header -->
+    <div class="flex items-center justify-between p-4 text-white">
+      <div class="flex-1">
+        <h2 id="lightbox-title" class="text-lg font-semibold"></h2>
+        <p id="lightbox-counter" class="text-sm text-gray-400"></p>
+      </div>
+      <button
+        type="button"
+        id="lightbox-close"
+        class="p-2 hover:bg-white/10 rounded-lg transition-colors"
+        aria-label="Close lightbox"
+      >
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Main content area -->
+    <div
+      class="flex-1 flex items-center justify-center relative overflow-hidden"
+    >
+      <!-- Previous button -->
+      <button
+        type="button"
+        id="lightbox-prev"
+        class="absolute left-4 z-10 p-3 bg-black/50 hover:bg-black/70 rounded-full text-white transition-colors"
+        aria-label="Previous photo"
+      >
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15 19l-7-7 7-7"></path>
+        </svg>
+      </button>
+
+      <!-- Image container with zoom -->
+      <div
+        id="lightbox-image-container"
+        class="max-w-full max-h-full cursor-zoom-in"
+      >
+        <img
+          id="lightbox-image"
+          src=""
+          alt=""
+          class="max-w-full max-h-[calc(100vh-250px)] object-contain transition-transform duration-200"
+        />
+      </div>
+
+      <!-- Next button -->
+      <button
+        type="button"
+        id="lightbox-next"
+        class="absolute right-4 z-10 p-3 bg-black/50 hover:bg-black/70 rounded-full text-white transition-colors"
+        aria-label="Next photo"
+      >
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 5l7 7-7 7"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Bottom section: Metadata and thumbnails -->
+    <div class="border-t border-gray-800">
+      <!-- Metadata -->
+      <div
+        id="lightbox-metadata"
+        class="p-4 text-white text-sm max-h-32 overflow-y-auto"
+      >
+        <div
+          id="metadata-content"
+          class="grid grid-cols-2 md:grid-cols-4 gap-4"
+        >
+        </div>
+      </div>
+
+      <!-- Thumbnail strip -->
+      <div class="p-4 overflow-x-auto">
+        <div id="lightbox-thumbnails" class="flex gap-2 min-w-max"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../scripts/lightbox.ts"></script>

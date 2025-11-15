@@ -1,0 +1,12 @@
+{
+  "albums": [
+    {
+      "coverPhoto": null,
+      "description": "A sample photo album to demonstrate the photo gallery features",
+      "id": "sample-album",
+      "photoCount": 0,
+      "photos": [],
+      "title": "Sample Album"
+    }
+  ]
+}
