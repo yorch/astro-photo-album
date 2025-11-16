@@ -16,30 +16,178 @@ const { homepage } = siteConfig;
   <div
     class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-cyan-50/20 dark:from-slate-900 dark:via-blue-950/30 dark:to-cyan-950/20"
   >
-    <!-- Header -->
+    <!-- Hero Header -->
     <header
-      class="bg-gradient-to-r from-white/90 via-purple-50/50 to-blue-50/30 dark:from-slate-800/90 dark:via-purple-950/50 dark:to-blue-950/30 backdrop-blur-lg border-b border-slate-200/60 dark:border-slate-700/60 shadow-lg"
+      class="relative w-full min-h-[400px] flex items-center justify-center overflow-hidden"
     >
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="text-center">
-          <h1
-            class="text-6xl font-black bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 dark:from-purple-400 dark:via-blue-400 dark:to-cyan-300 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300 inline-block"
-          >
-            {homepage.title}
-          </h1>
-          <p
-            class="mt-4 text-xl text-slate-600 dark:text-slate-400 font-medium"
-          >
-            {homepage.subtitle}
-            <span
-              class="font-bold bg-gradient-to-r from-purple-600 to-blue-600 dark:from-purple-400 dark:to-blue-400 bg-clip-text text-transparent"
-              >{albums.length}</span
-            >
-            {albums.length === 1 ? "collection" : "collections"}
-          </p>
+      <!-- Animated background elements -->
+      <div class="absolute inset-0 overflow-hidden">
+        <div
+          class="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-purple-500/20 to-blue-500/20 dark:from-purple-500/10 dark:to-blue-500/10 rounded-full blur-3xl animate-pulse"
+        >
+        </div>
+        <div
+          class="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-br from-cyan-500/15 to-purple-500/15 dark:from-cyan-500/10 dark:to-purple-500/10 rounded-full blur-3xl animate-pulse"
+          style="animation-delay: 1s;"
+        >
+        </div>
+        <div
+          class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-blue-500/10 to-transparent dark:from-blue-500/5 rounded-full blur-3xl"
+        >
         </div>
       </div>
+
+      <!-- Grid pattern overlay -->
+      <div
+        class="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:64px_64px]"
+      >
+      </div>
+
+      <!-- Content -->
+      <div class="relative z-10 max-w-5xl mx-auto px-6 py-12 text-center">
+        <!-- Main title -->
+        <h1
+          class="text-6xl md:text-7xl lg:text-8xl font-black mb-6 bg-gradient-to-br from-slate-900 via-purple-800 to-blue-900 dark:from-white dark:via-purple-200 dark:to-blue-200 bg-clip-text text-transparent opacity-0 animate-fade-in-up"
+          style="animation-delay: 0.1s;"
+        >
+          {homepage.title}
+        </h1>
+
+        <!-- Subtitle -->
+        <p
+          class="text-2xl md:text-3xl lg:text-4xl font-light text-slate-600 dark:text-slate-400 mb-8 opacity-0 animate-fade-in-up"
+          style="animation-delay: 0.2s;"
+        >
+          {homepage.subtitle}
+        </p>
+
+        <!-- Stats section -->
+        <div
+          class="flex flex-wrap items-center justify-center gap-8 md:gap-12 opacity-0 animate-fade-in-up"
+          style="animation-delay: 0.4s;"
+        >
+          <div class="flex items-center gap-3 group">
+            <div
+              class="p-3 rounded-full bg-purple-100/80 dark:bg-purple-900/30 group-hover:bg-purple-200/80 dark:group-hover:bg-purple-800/40 transition-colors backdrop-blur-sm"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="text-purple-600 dark:text-purple-400"
+              >
+                <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+                <circle cx="9" cy="9" r="2"></circle>
+                <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
+              </svg>
+            </div>
+            <div class="text-left">
+              <div class="text-3xl font-bold text-slate-900 dark:text-white">
+                {
+                  albumData.albums
+                    .reduce((sum, album) => sum + album.photoCount, 0)
+                    .toLocaleString()
+                }
+              </div>
+              <div class="text-sm text-slate-600 dark:text-slate-400">
+                Photos
+              </div>
+            </div>
+          </div>
+
+          <div class="hidden md:block w-px h-12 bg-slate-200 dark:bg-slate-700">
+          </div>
+
+          <div class="flex items-center gap-3 group">
+            <div
+              class="p-3 rounded-full bg-blue-100/80 dark:bg-blue-900/30 group-hover:bg-blue-200/80 dark:group-hover:bg-blue-800/40 transition-colors backdrop-blur-sm"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="text-blue-600 dark:text-blue-400"
+              >
+                <path
+                  d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"
+                ></path>
+                <circle cx="12" cy="13" r="3"></circle>
+              </svg>
+            </div>
+            <div class="text-left">
+              <div class="text-3xl font-bold text-slate-900 dark:text-white">
+                {albums.length}
+              </div>
+              <div class="text-sm text-slate-600 dark:text-slate-400">
+                {albums.length === 1 ? "Collection" : "Collections"}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom gradient fade -->
+      <div
+        class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-50 dark:from-slate-900 to-transparent"
+      >
+      </div>
     </header>
+
+    <style>
+      @keyframes fade-in {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes fade-in-up {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .animate-fade-in {
+        animation: fade-in 0.8s ease-out forwards;
+      }
+
+      .animate-fade-in-up {
+        animation: fade-in-up 0.8s ease-out forwards;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      .animate-pulse {
+        animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+    </style>
 
     <!-- Main content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
