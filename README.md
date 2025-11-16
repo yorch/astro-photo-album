@@ -7,7 +7,8 @@ A modern, highly configurable photo album application built with Astro, Alpine.j
 - 📸 **Interactive Galleries** - Tag filtering with masonry, grid, and list layouts
 - 🖼️ **Full-Featured Lightbox** - Zoom, pan, drag, EXIF metadata, and keyboard navigation
 - 🔍 **Zoom & Pan** - Multi-level zoom (1x-3x) with smooth drag functionality
-- 🎨 **Theme Switching** - Light/dark mode with auto-detection and persistence
+- 💾 **Album Downloads** - Optional download buttons for entire albums (ZIP files)
+- 🎭 **Theme Switching** - Light/dark mode with auto-detection and persistence
 - ⚡ **Lightweight** - Alpine.js powered (only 15kb), no heavy frameworks
 - 🚀 **Optimized Images** - Three-tier system (thumbnail/lightbox/full-size) with lazy loading
 - 📊 **EXIF Display** - Camera, lens, settings, and location metadata
@@ -23,29 +24,39 @@ A modern, highly configurable photo album application built with Astro, Alpine.j
    yarn install
    ```
 
-2. **Start development server:**
+2. **Add your photos:**
+   - Create folders in `public/albums/[album-name]/`
+   - Add JPG/PNG images to each album folder
+   - (Optional) Add `album.json` for metadata and download links
+
+3. **Generate album data:**
+
+   ```bash
+   yarn generate-albums
+   ```
+
+4. **Start development server:**
 
    ```bash
    yarn dev
    ```
 
-3. **Add your photos:**
-   - Place images in `public/photos/[album-name]/`
-   - Run `yarn build` to generate optimized images
-   - Images are automatically organized into albums by folder
-
-4. **Configure your site:**
+5. **Configure your site:**
    - Edit `src/config/site.json` to customize settings
    - See [CONFIG.md](./CONFIG.md) for all options
 
 ## 🧞 Commands
 
-| Command        | Action                                      |
-| :------------- | :------------------------------------------ |
-| `yarn install` | Installs dependencies                       |
-| `yarn dev`     | Starts local dev server at `localhost:4321` |
-| `yarn build`   | Build production site to `./dist/`          |
-| `yarn preview` | Preview your build locally                  |
+| Command                      | Action                                      |
+| :--------------------------- | :------------------------------------------ |
+| `yarn install`               | Installs dependencies                       |
+| `yarn generate-albums`       | Generate album data and optimize images     |
+| `yarn generate-albums:force` | Force regenerate all images (bypass cache)  |
+| `yarn dev`                   | Starts local dev server at `localhost:4321` |
+| `yarn build`                 | Build production site to `./dist/`          |
+| `yarn preview`               | Preview your build locally                  |
+| `yarn lint:fix`              | Run linter and auto-fix issues              |
+| `yarn astro check`           | Run TypeScript type checking                |
 
 ## ⚙️ Configuration
 
@@ -57,6 +68,7 @@ All features can be enabled/disabled via `src/config/site.json`:
 - **Tag filtering** - Filter photos by tags
 - **EXIF metadata** - Display camera and photo information
 - **Download button** - Allow users to download full-size images
+- **Album downloads** - Optional download links for entire albums (configured per-album)
 - **Zoom controls** - Enable multi-level zoom in lightbox
 - **Keyboard navigation** - Arrow keys, zoom shortcuts, and Esc to close
 
@@ -89,6 +101,13 @@ The application automatically generates three versions of each image:
 - **Thumbnails** (400px) - Fast gallery loading
 - **Lightbox** (1920px) - High-quality viewing
 - **Full-size** (original) - Download option
+
+Images are processed with Sharp for optimal quality and correct orientation:
+
+- **Auto-rotation** - EXIF orientation data ensures photos display correctly (portrait/landscape)
+- **Progressive JPEG** - Optimized for web with progressive loading
+- **Smart caching** - Only regenerates when source images are newer
+- **Force regeneration** - Use `yarn generate-albums:force` to bypass cache
 
 Images are lazy-loaded with intelligent prefetching based on scroll direction.
 

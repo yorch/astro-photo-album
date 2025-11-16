@@ -163,6 +163,50 @@ Set any `enable*` option to `false`:
 }
 ```
 
+## Album Downloads
+
+Each album can optionally include a download link for the entire album as a ZIP file.
+
+### Configuration
+
+Create or edit `album.json` in your album folder:
+
+```json
+{
+  "title": "Vacation 2024",
+  "description": "Summer vacation photos",
+  "downloadUrl": "/albums/vacation-2024/album.zip"
+}
+```
+
+Or use an external URL:
+
+```json
+{
+  "downloadUrl": "https://example.com/downloads/vacation-2024.zip"
+}
+```
+
+### How It Works
+
+- **downloadUrl** is optional - omit it to hide the download button for that album
+- Can be a relative path (e.g., `/albums/album-name/album.zip`) or external URL
+- Download button appears on album card with emerald/teal styling
+- Button prevents navigation to album when clicked
+- ZIP files must be created manually and placed in the appropriate location
+
+### Example Structure
+
+```
+public/albums/vacation-2024/
+  ├── album.json          # Includes downloadUrl
+  ├── album.zip           # ZIP file for download
+  ├── photo1.jpg
+  └── photo2.jpg
+```
+
+After adding or updating `album.json`, run `yarn generate-albums` to regenerate album data.
+
 ## Notes
 
 - Changes require rebuilding: `yarn build` or restart `yarn dev`

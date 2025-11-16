@@ -99,9 +99,10 @@ All features are controlled through `src/config/site.json`:
 
 - `Layout.astro` - Base layout with Alpine.js initialization
 - `PhotoGallery.astro` - Main gallery component (Alpine.js for interactivity)
-- `AlbumCard.astro` - Album preview cards
+- `AlbumCard.astro` - Album preview cards with optional download button (flexbox layout)
 - `ThemeSwitcher.astro` - Theme toggle component
 - `Footer.astro` - Configurable footer with social links
+- `index.astro` - Homepage with hero header (animated gradients, stats, fade-in animations)
 
 **Alpine.js Integration**:
 
@@ -205,12 +206,37 @@ public/albums/
    ```json
    {
      "title": "Album Title",
-     "description": "Album description"
+     "description": "Album description",
+     "downloadUrl": "/albums/album-name/album.zip"
    }
    ```
 
 4. Run `yarn generate-albums` to process
 5. Rebuild/restart dev server
+
+### Album Download Feature
+
+Each album can optionally include a download link for the entire album:
+
+1. Create a ZIP file of your album (manually or via script)
+2. Place ZIP file in `public/albums/[album-name]/album.zip` or external URL
+3. Add `downloadUrl` to `album.json`:
+
+   ```json
+   {
+     "downloadUrl": "/albums/vacation-2024/album.zip"
+   }
+   ```
+
+4. Regenerate album data: `yarn generate-albums`
+5. Download button appears on album card (emerald/teal badge)
+
+**Notes:**
+
+- `downloadUrl` is optional - omit to hide download button
+- Can be relative path (`/albums/...`) or external URL
+- Download button prevents navigation to album when clicked
+- Button has hover effects and distinct emerald/teal styling
 
 **Force Regeneration**: If you update the image processing script (e.g., fix orientation issues), use `yarn generate-albums:force` to regenerate all images regardless of timestamps.
 
@@ -298,11 +324,14 @@ if (config.enableZoom) {
 
 ## Important Files
 
-- `scripts/generate-album-data.ts` - Image processing and EXIF extraction
+- `scripts/generate-album-data.ts` - Image processing, EXIF extraction, and orientation handling
+- `src/pages/index.astro` - Homepage with hero header and album grid
+- `src/components/AlbumCard.astro` - Album cards with download button
 - `src/components/PhotoGallery.astro` - Main gallery component
 - `src/config/site.json` - All feature flags and site settings
 - `src/types/album.ts` - Core type definitions
 - `src/data/albums.json` - Generated album data (DO NOT EDIT MANUALLY)
+- `public/albums/[album-name]/album.json` - Optional per-album metadata
 
 ## Testing Workflow
 
