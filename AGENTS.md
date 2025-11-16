@@ -20,6 +20,9 @@ yarn dev
 # Generate album data from photos (MUST run before build)
 yarn generate-albums
 
+# Force regenerate all images (ignores existing thumbnails/lightbox)
+yarn generate-albums:force
+
 # Build production site
 yarn build
 
@@ -209,13 +212,16 @@ public/albums/
 4. Run `yarn generate-albums` to process
 5. Rebuild/restart dev server
 
+**Force Regeneration**: If you update the image processing script (e.g., fix orientation issues), use `yarn generate-albums:force` to regenerate all images regardless of timestamps.
+
 ### Image Processing Notes
 
-- Sharp library handles image optimization
+- Sharp library handles image optimization with auto-rotation for proper orientation
 - Thumbnails maintain aspect ratio (max width 400px)
 - Lightbox images capped at 1920px width
 - Original images preserved for download feature
 - Generated images cached (only regenerate if source newer)
+- Use `--force` or `-f` flag to bypass cache and regenerate all images
 
 ## Configuration Patterns
 

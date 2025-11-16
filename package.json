@@ -13,6 +13,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "generate-albums": "tsx scripts/generate-album-data.ts",
+    "generate-albums:force": "tsx scripts/generate-album-data.ts --force",
     "lint": "biome lint --write .",
     "lint:fix": "biome check --write ."
   },

@@ -14,6 +14,9 @@ const THUMBNAILS_DIR = join(__dirname, '../public/thumbnails');
 const LIGHTBOX_DIR = join(__dirname, '../public/lightbox');
 const OUTPUT_FILE = join(__dirname, '../src/data/albums.json');
 
+// Parse command-line arguments
+const FORCE_REGENERATE = process.argv.includes('--force') || process.argv.includes('-f');
+
 // Image optimization configuration
 const THUMBNAIL_WIDTH = 400;
 const THUMBNAIL_QUALITY = 80;
@@ -33,8 +36,8 @@ async function generateThumbnail(
 
   const thumbnailPath = join(thumbnailAlbumDir, filename);
 
-  // Skip if thumbnail already exists and is newer than source
-  if (existsSync(thumbnailPath)) {
+  // Skip if thumbnail already exists and is newer than source (unless force regenerate)
+  if (!FORCE_REGENERATE && existsSync(thumbnailPath)) {
     const sourceStats = statSync(sourcePath);
     const thumbStats = statSync(thumbnailPath);
     if (thumbStats.mtime >= sourceStats.mtime) {
@@ -74,8 +77,8 @@ async function generateLightboxImage(
 
   const lightboxPath = join(lightboxAlbumDir, filename);
 
-  // Skip if lightbox image already exists and is newer than source
-  if (existsSync(lightboxPath)) {
+  // Skip if lightbox image already exists and is newer than source (unless force regenerate)
+  if (!FORCE_REGENERATE && existsSync(lightboxPath)) {
     const sourceStats = statSync(sourcePath);
     const lightboxStats = statSync(lightboxPath);
     if (lightboxStats.mtime >= sourceStats.mtime) {
@@ -140,6 +143,10 @@ function extractExifData(filePath: string): ExifData {
 }
 
 async function generateAlbumData() {
+  if (FORCE_REGENERATE) {
+    console.log('🔄 Force regenerate mode enabled - all images will be regenerated');
+  }
+
   if (!existsSync(ALBUMS_DIR)) {
     console.log('Albums directory not found, creating...');
     mkdirSync(ALBUMS_DIR, { recursive: true });
