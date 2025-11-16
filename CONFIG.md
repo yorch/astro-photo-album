@@ -1,14 +1,20 @@
 # Configuration Guide
 
-This photo album application can be customized through the `src/config/site.json` configuration file.
+Customize your photo album through `src/config/site.json`. All features can be enabled/disabled via configuration.
 
-## Configuration File Location
+## Configuration Structure
 
-`src/config/site.json`
+```json
+{
+  "site": { ... },
+  "homepage": { ... },
+  "footer": { ... },
+  "gallery": { ... },
+  "theme": { ... }
+}
+```
 
-## Configuration Options
-
-### Site Settings
+## Site Settings
 
 ```json
 "site": {
@@ -18,11 +24,11 @@ This photo album application can be customized through the `src/config/site.json
 }
 ```
 
-- **title**: Default page title shown in browser tabs
-- **description**: Default meta description for SEO
-- **author**: Site author name (used in meta tags)
+- **title** - Page title shown in browser tabs and meta tags
+- **description** - Meta description for SEO
+- **author** - Author name in meta tags
 
-### Homepage Settings
+## Homepage Settings
 
 ```json
 "homepage": {
@@ -31,56 +37,40 @@ This photo album application can be customized through the `src/config/site.json
 }
 ```
 
-- **title**: Main heading displayed on the homepage
-- **subtitle**: Subtitle text (album count will be automatically added after this text)
+- **title** - Main heading on homepage
+- **subtitle** - Subtitle text (album count is automatically appended)
 
-### Footer Configuration
+## Footer Configuration
 
 ```json
 "footer": {
   "enabled": true,
-  "text": "© 2025 Your Name. All rights reserved.",
-  "links": [...],
-  "social": [...]
+  "text": "© 2025 Your Name",
+  "links": [
+    { "text": "Contact", "url": "/contact" }
+  ],
+  "social": [
+    { "platform": "github", "url": "https://github.com/username", "icon": "github" }
+  ]
 }
 ```
 
-- **enabled**: Show/hide the footer (`true` or `false`)
-- **text**: Copyright or main footer text
-- **links**: Array of footer navigation links
-- **social**: Array of social media links
+- **enabled** - Show/hide footer
+- **text** - Copyright or footer text
+- **links** - Array of navigation links
+- **social** - Array of social media links
 
-#### Footer Links
+### Social Icons
 
-```json
-"links": [
-  {
-    "text": "Privacy Policy",
-    "url": "/privacy"
-  }
-]
-```
+Supported platforms: `github`, `instagram`, `twitter`, `linkedin`, `facebook`
 
-- **text**: Link text to display
-- **url**: Link destination (internal paths will be prefixed with base URL)
+Each social link requires:
 
-#### Social Links
+- **platform** - Platform name (for aria-label)
+- **url** - Full URL to profile
+- **icon** - Icon identifier (must match supported platform)
 
-```json
-"social": [
-  {
-    "platform": "github",
-    "url": "https://github.com/yourusername",
-    "icon": "github"
-  }
-]
-```
-
-- **platform**: Platform name (for aria-label)
-- **url**: Full URL to your social profile
-- **icon**: Icon name (supported: `github`, `instagram`, `twitter`, `linkedin`, `facebook`)
-
-### Gallery Settings
+## Gallery Settings
 
 ```json
 "gallery": {
@@ -93,14 +83,17 @@ This photo album application can be customized through the `src/config/site.json
 }
 ```
 
-- **defaultLayout**: Default gallery layout (`"masonry"`, `"grid"`, or `"list"`)
-- **enableTags**: Enable/disable tag filtering
-- **enableExif**: Show/hide EXIF metadata in lightbox
-- **enableDownload**: Enable/disable photo download button
-- **enableZoom**: Enable/disable zoom functionality in lightbox
-- **enableKeyboardNavigation**: Enable/disable keyboard shortcuts (Arrow keys for navigation, +/- for zoom, Esc to close)
+- **defaultLayout** - Initial layout: `"masonry"`, `"grid"`, or `"list"`
+- **enableTags** - Show/hide tag filtering
+- **enableExif** - Display EXIF metadata in lightbox
+- **enableDownload** - Show download button for full-size images
+- **enableZoom** - Enable zoom controls (1x-3x zoom with pan/drag)
+- **enableKeyboardNavigation** - Enable keyboard shortcuts:
+  - **← →** Navigate photos
+  - **+ -** Zoom in/out
+  - **Esc** Close lightbox
 
-### Theme Settings
+## Theme Settings
 
 ```json
 "theme": {
@@ -109,18 +102,16 @@ This photo album application can be customized through the `src/config/site.json
 }
 ```
 
-- **defaultTheme**: Default theme on first visit (`"light"`, `"dark"`, or `"auto"`)
-- **enableThemeSwitcher**: Show/hide theme switcher button
+- **defaultTheme** - Default theme: `"light"`, `"dark"`, or `"auto"`
+- **enableThemeSwitcher** - Show/hide theme switcher button
 
-## Example Configuration
-
-Here's a complete example configuration:
+## Complete Example
 
 ```json
 {
   "site": {
-    "title": "My Photography Portfolio",
-    "description": "Professional photography portfolio featuring landscape and portrait work",
+    "title": "My Photography",
+    "description": "Professional photography portfolio",
     "author": "Jane Photographer"
   },
   "homepage": {
@@ -129,41 +120,23 @@ Here's a complete example configuration:
   },
   "footer": {
     "enabled": true,
-    "text": "© 2025 Jane Photographer. All rights reserved.",
+    "text": "© 2025 Jane Photographer",
     "links": [
-      {
-        "text": "About",
-        "url": "/about"
-      },
-      {
-        "text": "Contact",
-        "url": "/contact"
-      },
-      {
-        "text": "Prints",
-        "url": "/prints"
-      }
+      { "text": "About", "url": "/about" },
+      { "text": "Contact", "url": "/contact" }
     ],
     "social": [
-      {
-        "platform": "instagram",
-        "url": "https://instagram.com/janephoto",
-        "icon": "instagram"
-      },
-      {
-        "platform": "github",
-        "url": "https://github.com/janephoto",
-        "icon": "github"
-      }
+      { "platform": "instagram", "url": "https://instagram.com/janephoto", "icon": "instagram" },
+      { "platform": "github", "url": "https://github.com/janephoto", "icon": "github" }
     ]
   },
   "gallery": {
     "defaultLayout": "masonry",
-    "enableDownload": false,
-    "enableExif": true,
-    "enableKeyboardNavigation": true,
     "enableTags": true,
-    "enableZoom": true
+    "enableExif": true,
+    "enableDownload": false,
+    "enableZoom": true,
+    "enableKeyboardNavigation": true
   },
   "theme": {
     "defaultTheme": "dark",
@@ -174,19 +147,25 @@ Here's a complete example configuration:
 
 ## Disabling Features
 
-To disable features, set the corresponding option to `false`:
+Set any `enable*` option to `false`:
 
-- Disable footer: `"enabled": false` in footer section
-- Disable theme switcher: `"enableThemeSwitcher": false`
-- Disable downloads: `"enableDownload": false`
-- Disable EXIF data: `"enableExif": false`
-- Disable tags: `"enableTags": false`
-- Disable zoom: `"enableZoom": false`
-- Disable keyboard navigation: `"enableKeyboardNavigation": false`
+```json
+{
+  "footer": { "enabled": false },
+  "gallery": {
+    "enableTags": false,
+    "enableExif": false,
+    "enableDownload": false,
+    "enableZoom": false,
+    "enableKeyboardNavigation": false
+  },
+  "theme": { "enableThemeSwitcher": false }
+}
+```
 
 ## Notes
 
-- Changes to `site.json` require rebuilding the site (`yarn build` or `yarn dev`)
-- Invalid JSON will cause build errors - validate your JSON before saving
-- Social icon must match one of the supported platforms
-- Base URL from `astro.config.mjs` is automatically applied to internal links
+- Changes require rebuilding: `yarn build` or restart `yarn dev`
+- Invalid JSON will cause build errors - validate before saving
+- Internal URLs (footer links) are automatically prefixed with base URL from `astro.config.mjs`
+- Keyboard shortcuts are visually displayed in lightbox when enabled
