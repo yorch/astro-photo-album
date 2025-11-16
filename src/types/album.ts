@@ -15,6 +15,7 @@ export interface Photo {
   filename: string;
   url: string;
   thumbnailUrl: string;
+  lightboxUrl: string;
   title: string | null;
   caption: string | null;
   tags: string[];

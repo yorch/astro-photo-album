@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import fs from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import ExifReader from 'exifreader';
@@ -11,11 +11,14 @@ const __dirname = dirname(__filename);
 
 const ALBUMS_DIR = join(__dirname, '../public/albums');
 const THUMBNAILS_DIR = join(__dirname, '../public/thumbnails');
+const LIGHTBOX_DIR = join(__dirname, '../public/lightbox');
 const OUTPUT_FILE = join(__dirname, '../src/data/albums.json');
 
-// Thumbnail configuration
+// Image optimization configuration
 const THUMBNAIL_WIDTH = 400;
 const THUMBNAIL_QUALITY = 80;
+const LIGHTBOX_WIDTH = 1920;
+const LIGHTBOX_QUALITY = 85;
 
 async function generateThumbnail(
   sourcePath: string,
@@ -24,16 +27,16 @@ async function generateThumbnail(
 ): Promise<string> {
   // Create thumbnails directory structure
   const thumbnailAlbumDir = join(THUMBNAILS_DIR, albumName);
-  if (!fs.existsSync(thumbnailAlbumDir)) {
-    fs.mkdirSync(thumbnailAlbumDir, { recursive: true });
+  if (!existsSync(thumbnailAlbumDir)) {
+    mkdirSync(thumbnailAlbumDir, { recursive: true });
   }
 
   const thumbnailPath = join(thumbnailAlbumDir, filename);
 
   // Skip if thumbnail already exists and is newer than source
-  if (fs.existsSync(thumbnailPath)) {
-    const sourceStats = fs.statSync(sourcePath);
-    const thumbStats = fs.statSync(thumbnailPath);
+  if (existsSync(thumbnailPath)) {
+    const sourceStats = statSync(sourcePath);
+    const thumbStats = statSync(thumbnailPath);
     if (thumbStats.mtime >= sourceStats.mtime) {
       return `/thumbnails/${albumName}/${filename}`;
     }
@@ -57,9 +60,49 @@ async function generateThumbnail(
   }
 }
 
+async function generateLightboxImage(
+  sourcePath: string,
+  albumName: string,
+  filename: string
+): Promise<string> {
+  // Create lightbox directory structure
+  const lightboxAlbumDir = join(LIGHTBOX_DIR, albumName);
+  if (!existsSync(lightboxAlbumDir)) {
+    mkdirSync(lightboxAlbumDir, { recursive: true });
+  }
+
+  const lightboxPath = join(lightboxAlbumDir, filename);
+
+  // Skip if lightbox image already exists and is newer than source
+  if (existsSync(lightboxPath)) {
+    const sourceStats = statSync(sourcePath);
+    const lightboxStats = statSync(lightboxPath);
+    if (lightboxStats.mtime >= sourceStats.mtime) {
+      return `/lightbox/${albumName}/${filename}`;
+    }
+  }
+
+  // Generate lightbox-optimized image using sharp
+  try {
+    await sharp(sourcePath)
+      .resize(LIGHTBOX_WIDTH, null, {
+        fit: 'inside',
+        withoutEnlargement: true,
+      })
+      .jpeg({ progressive: true, quality: LIGHTBOX_QUALITY })
+      .toFile(lightboxPath);
+
+    return `/lightbox/${albumName}/${filename}`;
+  } catch (error) {
+    console.warn(`Failed to generate lightbox image for ${filename}:`, error);
+    // Fallback to original image
+    return `/albums/${albumName}/${filename}`;
+  }
+}
+
 function extractExifData(filePath: string): ExifData {
   try {
-    const tags = ExifReader.load(fs.readFileSync(filePath));
+    const tags = ExifReader.load(readFileSync(filePath));
 
     return {
       aperture: tags.FNumber?.description ?? null,
@@ -95,20 +138,22 @@ function extractExifData(filePath: string): ExifData {
 }
 
 async function generateAlbumData() {
-  if (!fs.existsSync(ALBUMS_DIR)) {
+  if (!existsSync(ALBUMS_DIR)) {
     console.log('Albums directory not found, creating...');
-    fs.mkdirSync(ALBUMS_DIR, { recursive: true });
+    mkdirSync(ALBUMS_DIR, { recursive: true });
     return { albums: [] };
   }
 
-  // Create thumbnails directory
-  if (!fs.existsSync(THUMBNAILS_DIR)) {
-    fs.mkdirSync(THUMBNAILS_DIR, { recursive: true });
+  // Create thumbnails and lightbox directories
+  if (!existsSync(THUMBNAILS_DIR)) {
+    mkdirSync(THUMBNAILS_DIR, { recursive: true });
+  }
+  if (!existsSync(LIGHTBOX_DIR)) {
+    mkdirSync(LIGHTBOX_DIR, { recursive: true });
   }
 
   const albums = [];
-  const albumDirs = fs
-    .readdirSync(ALBUMS_DIR, { withFileTypes: true })
+  const albumDirs = readdirSync(ALBUMS_DIR, { withFileTypes: true })
     .filter((dirent) => dirent.isDirectory())
     .map((dirent) => dirent.name);
 
@@ -117,22 +162,24 @@ async function generateAlbumData() {
     const photos = [];
 
     // Read all image files in the album directory
-    const files = fs.readdirSync(albumPath);
+    const files = readdirSync(albumPath);
     const imageFiles = files.filter((file) => /\.(jpg|jpeg|png|gif|webp)$/i.test(file));
 
     console.log(`Processing ${albumName}: ${imageFiles.length} photos...`);
 
     for (const filename of imageFiles) {
       const filePath = join(albumPath, filename);
-      const stats = fs.statSync(filePath);
+      const stats = statSync(filePath);
       const exifData = extractExifData(filePath);
       const thumbnailUrl = await generateThumbnail(filePath, albumName, filename);
+      const lightboxUrl = await generateLightboxImage(filePath, albumName, filename);
 
       photos.push({
         caption: null, // Can be manually added later
         exif: exifData,
         filename,
         fileSize: stats.size,
+        lightboxUrl,
         tags: [], // Can be manually added later
         thumbnailUrl,
         title: null, // Can be manually added later
@@ -147,9 +194,9 @@ async function generateAlbumData() {
       title: albumName.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()),
     };
 
-    if (fs.existsSync(metadataPath)) {
+    if (existsSync(metadataPath)) {
       try {
-        const metadataContent = fs.readFileSync(metadataPath, 'utf-8');
+        const metadataContent = readFileSync(metadataPath, 'utf-8');
         const metadata = JSON.parse(metadataContent) as AlbumMetadata;
         albumMetadata = { ...albumMetadata, ...metadata };
       } catch (error) {
@@ -178,9 +225,10 @@ async function generateAlbumData() {
 
 // Generate and save the album data
 const albumData = await generateAlbumData();
-fs.writeFileSync(OUTPUT_FILE, JSON.stringify(albumData, null, 2));
+writeFileSync(OUTPUT_FILE, JSON.stringify(albumData, null, 2));
 console.log(`✓ Generated album data for ${albumData.albums.length} albums`);
 console.log(
   `  Total photos: ${albumData.albums.reduce((sum, album) => sum + album.photoCount, 0)}`
 );
 console.log(`✓ Thumbnails generated in ${THUMBNAILS_DIR}`);
+console.log(`✓ Lightbox images generated in ${LIGHTBOX_DIR}`);

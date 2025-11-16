@@ -17,6 +17,7 @@ const photosData = photos.map((photo, index) => ({
   exif: photo.exif,
   filename: photo.filename,
   id: `${albumId || "photo"}-${index}`,
+  lightboxSrc: `${base}${photo.lightboxUrl}`,
   src: `${base}${photo.url}`,
   tags: photo.tags,
   thumbnailSrc: `${base}${photo.thumbnailUrl}`,
@@ -34,11 +35,21 @@ const photosData = photos.map((photo, index) => ({
     scrollDirection: 'down',
     lastScrollY: 0,
     layoutMode: $persist('masonry').as('photo-gallery-layout'),
+    isZoomed: false,
 
     init() {
       this.photos = JSON.parse(this.$el.dataset.photos);
       this.availableTags = this.extractTags();
       this.setupScrollTracking();
+    },
+
+    toggleZoom() {
+      if (!this.isZoomed) {
+        // Preload full-size image when zooming in
+        const fullImg = new Image();
+        fullImg.src = this.selectedPhoto.src;
+      }
+      this.isZoomed = !this.isZoomed;
     },
 
     get layoutClasses() {
@@ -131,13 +142,15 @@ const photosData = photos.map((photo, index) => ({
     openLightbox(photo) {
       this.selectedPhoto = photo;
       this.lightboxOpen = true;
-      // Preload full-size image when lightbox opens
-      const fullImg = new Image();
-      fullImg.src = photo.src;
+      this.isZoomed = false;
+      // Preload lightbox image when lightbox opens
+      const lightboxImg = new Image();
+      lightboxImg.src = photo.lightboxSrc;
     },
 
     closeLightbox() {
       this.lightboxOpen = false;
+      this.isZoomed = false;
       setTimeout(() => this.selectedPhoto = null, 300);
     },
 
@@ -145,20 +158,22 @@ const photosData = photos.map((photo, index) => ({
       const currentIndex = this.filteredPhotos.findIndex(p => p.id === this.selectedPhoto.id);
       const nextIndex = (currentIndex + 1) % this.filteredPhotos.length;
       this.selectedPhoto = this.filteredPhotos[nextIndex];
-      // Preload next photo's full size
+      this.isZoomed = false;
+      // Preload next photo's lightbox image
       const nextNextIndex = (nextIndex + 1) % this.filteredPhotos.length;
       const preloadImg = new Image();
-      preloadImg.src = this.filteredPhotos[nextNextIndex].src;
+      preloadImg.src = this.filteredPhotos[nextNextIndex].lightboxSrc;
     },
 
     prevPhoto() {
       const currentIndex = this.filteredPhotos.findIndex(p => p.id === this.selectedPhoto.id);
       const prevIndex = (currentIndex - 1 + this.filteredPhotos.length) % this.filteredPhotos.length;
       this.selectedPhoto = this.filteredPhotos[prevIndex];
-      // Preload previous photo's full size
+      this.isZoomed = false;
+      // Preload previous photo's lightbox image
       const prevPrevIndex = (prevIndex - 1 + this.filteredPhotos.length) % this.filteredPhotos.length;
       const preloadImg = new Image();
-      preloadImg.src = this.filteredPhotos[prevPrevIndex].src;
+      preloadImg.src = this.filteredPhotos[prevPrevIndex].lightboxSrc;
     }
   }"
   data-photos={JSON.stringify(photosData)}
@@ -400,12 +415,22 @@ const photosData = photos.map((photo, index) => ({
       class="relative max-w-5xl max-h-[90vh] flex flex-col items-center"
       x-show="selectedPhoto"
     >
-      <img
-        x-show="selectedPhoto"
-        :src="selectedPhoto?.src"
-        :alt="selectedPhoto?.alt"
-        class="max-w-full max-h-[80vh] object-contain rounded-lg"
-      />
+      <div class="relative overflow-hidden rounded-lg">
+        <img
+          x-show="selectedPhoto"
+          :src="isZoomed ? selectedPhoto?.src : selectedPhoto?.lightboxSrc"
+          :alt="selectedPhoto?.alt"
+          class="max-w-full max-h-[80vh] object-contain rounded-lg transition-transform duration-300 cursor-zoom-in"
+          :class="{ 'cursor-zoom-out scale-150': isZoomed }"
+          @click="toggleZoom()"
+        />
+        <div
+          x-show="!isZoomed"
+          class="absolute bottom-4 right-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm rounded-full px-3 py-1.5 text-xs font-semibold text-purple-600 dark:text-purple-400 pointer-events-none"
+        >
+          Click to zoom
+        </div>
+      </div>
       <div class="mt-4 text-white w-full max-w-3xl">
         <!-- Title and Caption -->
         <div class="text-center mb-4">
