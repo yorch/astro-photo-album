@@ -31,6 +31,7 @@ export interface Album {
   coverPhotoThumbnail: string | null;
   photoCount: number;
   photos: Photo[];
+  downloadUrl: string | null;
 }
 
 export interface AlbumData {
@@ -40,4 +41,5 @@ export interface AlbumData {
 export interface AlbumMetadata {
   title?: string;
   description?: string;
+  downloadUrl?: string;
 }

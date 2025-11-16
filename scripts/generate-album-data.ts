@@ -200,6 +200,7 @@ async function generateAlbumData() {
     const metadataPath = join(albumPath, 'album.json');
     let albumMetadata: AlbumMetadata = {
       description: undefined,
+      downloadUrl: undefined,
       title: albumName.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()),
     };
 
@@ -219,6 +220,7 @@ async function generateAlbumData() {
       ...albumMetadata,
       coverPhoto: photos[0]?.url || null,
       coverPhotoThumbnail: photos[0]?.thumbnailUrl || null,
+      downloadUrl: albumMetadata.downloadUrl || null,
       photoCount: photos.length,
       photos: photos.sort((a, b) => {
         // Sort by date if available, otherwise by filename
