@@ -579,6 +579,40 @@ const alpineConfig = {
         >
           <span x-text="`${zoomLevel}x`"></span>
         </div>
+        <!-- Keyboard shortcuts hint -->
+        <div
+          x-show="config.enableKeyboardNavigation"
+          class="absolute bottom-4 left-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm rounded-lg px-3 py-2 text-xs text-slate-700 dark:text-slate-300 pointer-events-none shadow-lg"
+        >
+          <div class="flex items-center gap-3">
+            <span class="flex items-center gap-1">
+              <kbd
+                class="px-1.5 py-0.5 bg-slate-200 dark:bg-slate-700 rounded text-[10px] font-mono"
+                >←</kbd
+              >
+              <kbd
+                class="px-1.5 py-0.5 bg-slate-200 dark:bg-slate-700 rounded text-[10px] font-mono"
+                >→</kbd
+              >
+            </span>
+            <span x-show="config.enableZoom" class="flex items-center gap-1">
+              <kbd
+                class="px-1.5 py-0.5 bg-slate-200 dark:bg-slate-700 rounded text-[10px] font-mono"
+                >+</kbd
+              >
+              <kbd
+                class="px-1.5 py-0.5 bg-slate-200 dark:bg-slate-700 rounded text-[10px] font-mono"
+                >-</kbd
+              >
+            </span>
+            <span class="flex items-center">
+              <kbd
+                class="px-1.5 py-0.5 bg-slate-200 dark:bg-slate-700 rounded text-[10px] font-mono"
+                >Esc</kbd
+              >
+            </span>
+          </div>
+        </div>
       </div>
       <div class="mt-4 text-white w-full max-w-3xl">
         <!-- Title and Caption -->
