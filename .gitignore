@@ -35,5 +35,6 @@ pnpm-debug.log*
 # AI
 .claude/settings.local.json
 
-# Generated thumbnails
+# Generated thumbnails and lightbox images
 public/thumbnails/
+public/lightbox/
