@@ -45,6 +45,7 @@ async function generateThumbnail(
   // Generate thumbnail using sharp
   try {
     await sharp(sourcePath)
+      .rotate() // Auto-rotate based on EXIF orientation
       .resize(THUMBNAIL_WIDTH, null, {
         fit: 'inside',
         withoutEnlargement: true,
@@ -85,6 +86,7 @@ async function generateLightboxImage(
   // Generate lightbox-optimized image using sharp
   try {
     await sharp(sourcePath)
+      .rotate() // Auto-rotate based on EXIF orientation
       .resize(LIGHTBOX_WIDTH, null, {
         fit: 'inside',
         withoutEnlargement: true,
