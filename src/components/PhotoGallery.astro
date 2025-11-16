@@ -35,7 +35,7 @@ const photosData = photos.map((photo, index) => ({
     scrollDirection: 'down',
     lastScrollY: 0,
     layoutMode: $persist('masonry').as('photo-gallery-layout'),
-    isZoomed: false,
+    zoomLevel: 1,
     panX: 0,
     panY: 0,
     isDragging: false,
@@ -48,19 +48,37 @@ const photosData = photos.map((photo, index) => ({
       this.setupScrollTracking();
     },
 
-    toggleZoom() {
-      if (!this.isZoomed) {
-        // Preload full-size image when zooming in
+    zoomIn() {
+      if (this.zoomLevel === 1) {
+        // Preload full-size image when first zooming in
         const fullImg = new Image();
         fullImg.src = this.selectedPhoto.src;
-        this.panX = 0;
-        this.panY = 0;
       }
-      this.isZoomed = !this.isZoomed;
+      // Zoom in steps: 1 -> 1.5 -> 2 -> 2.5 -> 3
+      if (this.zoomLevel < 3) {
+        this.zoomLevel = Math.min(3, this.zoomLevel + 0.5);
+      }
+    },
+
+    zoomOut() {
+      // Zoom out steps: 3 -> 2.5 -> 2 -> 1.5 -> 1
+      if (this.zoomLevel > 1) {
+        this.zoomLevel = Math.max(1, this.zoomLevel - 0.5);
+        if (this.zoomLevel === 1) {
+          this.panX = 0;
+          this.panY = 0;
+        }
+      }
+    },
+
+    resetZoom() {
+      this.zoomLevel = 1;
+      this.panX = 0;
+      this.panY = 0;
     },
 
     startDrag(e) {
-      if (!this.isZoomed) return;
+      if (this.zoomLevel <= 1) return;
       e.preventDefault();
       this.isDragging = true;
       this.dragStartX = e.clientX;
@@ -68,18 +86,20 @@ const photosData = photos.map((photo, index) => ({
     },
 
     onDrag(e) {
-      if (!this.isDragging || !this.isZoomed) return;
+      if (!this.isDragging || this.zoomLevel <= 1) return;
       e.preventDefault();
-      const deltaX = (e.clientX - this.dragStartX) / 1.5;
-      const deltaY = (e.clientY - this.dragStartY) / 1.5;
+      const deltaX = (e.clientX - this.dragStartX) / this.zoomLevel;
+      const deltaY = (e.clientY - this.dragStartY) / this.zoomLevel;
 
       // Calculate new pan values
       let newPanX = this.panX + deltaX;
       let newPanY = this.panY + deltaY;
 
       // Apply pan limits to prevent dragging too far
-      // At 1.5x zoom, we can pan up to 25% of the image size in each direction
-      const maxPan = 200; // Maximum pan distance in pixels
+      // Pan limit is based on how much the zoomed image extends beyond viewport
+      // At zoom level Z, the image extends (Z - 1) / 2 on each side
+      // We allow panning the full extended area
+      const maxPan = 300 * (this.zoomLevel - 1); // Maximum pan distance in pixels
       newPanX = Math.max(-maxPan, Math.min(maxPan, newPanX));
       newPanY = Math.max(-maxPan, Math.min(maxPan, newPanY));
 
@@ -183,9 +203,7 @@ const photosData = photos.map((photo, index) => ({
     openLightbox(photo) {
       this.selectedPhoto = photo;
       this.lightboxOpen = true;
-      this.isZoomed = false;
-      this.panX = 0;
-      this.panY = 0;
+      this.resetZoom();
       // Preload lightbox image when lightbox opens
       const lightboxImg = new Image();
       lightboxImg.src = photo.lightboxSrc;
@@ -193,9 +211,7 @@ const photosData = photos.map((photo, index) => ({
 
     closeLightbox() {
       this.lightboxOpen = false;
-      this.isZoomed = false;
-      this.panX = 0;
-      this.panY = 0;
+      this.resetZoom();
       setTimeout(() => this.selectedPhoto = null, 300);
     },
 
@@ -203,9 +219,7 @@ const photosData = photos.map((photo, index) => ({
       const currentIndex = this.filteredPhotos.findIndex(p => p.id === this.selectedPhoto.id);
       const nextIndex = (currentIndex + 1) % this.filteredPhotos.length;
       this.selectedPhoto = this.filteredPhotos[nextIndex];
-      this.isZoomed = false;
-      this.panX = 0;
-      this.panY = 0;
+      this.resetZoom();
       // Preload next photo's lightbox image
       const nextNextIndex = (nextIndex + 1) % this.filteredPhotos.length;
       const preloadImg = new Image();
@@ -216,9 +230,7 @@ const photosData = photos.map((photo, index) => ({
       const currentIndex = this.filteredPhotos.findIndex(p => p.id === this.selectedPhoto.id);
       const prevIndex = (currentIndex - 1 + this.filteredPhotos.length) % this.filteredPhotos.length;
       this.selectedPhoto = this.filteredPhotos[prevIndex];
-      this.isZoomed = false;
-      this.panX = 0;
-      this.panY = 0;
+      this.resetZoom();
       // Preload previous photo's lightbox image
       const prevPrevIndex = (prevIndex - 1 + this.filteredPhotos.length) % this.filteredPhotos.length;
       const preloadImg = new Image();
@@ -467,27 +479,68 @@ const photosData = photos.map((photo, index) => ({
       <div class="relative overflow-hidden rounded-lg">
         <img
           x-show="selectedPhoto"
-          :src="isZoomed ? selectedPhoto?.src : selectedPhoto?.lightboxSrc"
+          :src="zoomLevel > 1 ? selectedPhoto?.src : selectedPhoto?.lightboxSrc"
           :alt="selectedPhoto?.alt"
           class="max-w-full max-h-[80vh] object-contain rounded-lg select-none"
           :class="{
-            'cursor-zoom-in': !isZoomed,
-            'cursor-grab': isZoomed && !isDragging,
-            'cursor-grabbing': isZoomed && isDragging,
+            'cursor-grab': zoomLevel > 1 && !isDragging,
+            'cursor-grabbing': zoomLevel > 1 && isDragging,
             'transition-transform duration-300': !isDragging
           }"
-          :style="isZoomed ? `transform: translate(${panX}px, ${panY}px) scale(1.5)` : ''"
-          @click="isZoomed ? null : toggleZoom()"
+          :style="zoomLevel > 1 ? `transform: translate(${panX}px, ${panY}px) scale(${zoomLevel})` : ''"
           @mousedown="startDrag($event)"
           @mousemove="onDrag($event)"
           @mouseup="stopDrag()"
           @mouseleave="stopDrag()"
         />
+        <!-- Zoom controls -->
+        <div class="absolute top-4 right-4 flex flex-col gap-2">
+          <button
+            @click.stop="zoomIn()"
+            class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm rounded-full p-2 hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors shadow-lg"
+            :class="{ 'opacity-50 cursor-not-allowed': zoomLevel >= 3 }"
+            :disabled="zoomLevel >= 3"
+          >
+            <svg
+              class="w-5 h-5 text-purple-600 dark:text-purple-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"
+              ></path>
+            </svg>
+          </button>
+          <button
+            @click.stop="zoomOut()"
+            class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm rounded-full p-2 hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors shadow-lg"
+            :class="{ 'opacity-50 cursor-not-allowed': zoomLevel <= 1 }"
+            :disabled="zoomLevel <= 1"
+          >
+            <svg
+              class="w-5 h-5 text-purple-600 dark:text-purple-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7"></path>
+            </svg>
+          </button>
+        </div>
+        <!-- Zoom level indicator -->
         <div
-          x-show="!isZoomed"
+          x-show="zoomLevel > 1"
           class="absolute bottom-4 right-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm rounded-full px-3 py-1.5 text-xs font-semibold text-purple-600 dark:text-purple-400 pointer-events-none"
         >
-          Click to zoom
+          <span x-text="`${zoomLevel}x`"></span>
         </div>
       </div>
       <div class="mt-4 text-white w-full max-w-3xl">
