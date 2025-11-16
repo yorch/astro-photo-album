@@ -1,11 +1,15 @@
 ---
 import AlbumCard from "../components/AlbumCard.astro";
+import siteConfigJson from "../config/site.json";
 import albumDataJson from "../data/albums.json";
 import Layout from "../layouts/Layout.astro";
 import type { AlbumData } from "../types/album";
+import type { SiteConfig } from "../types/config";
 
 const albumData = albumDataJson as AlbumData;
 const { albums } = albumData;
+const siteConfig = siteConfigJson as SiteConfig;
+const { homepage } = siteConfig;
 ---
 
 <Layout>
@@ -21,12 +25,13 @@ const { albums } = albumData;
           <h1
             class="text-6xl font-black bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 dark:from-purple-400 dark:via-blue-400 dark:to-cyan-300 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300 inline-block"
           >
-            Photo Albums
+            {homepage.title}
           </h1>
           <p
             class="mt-4 text-xl text-slate-600 dark:text-slate-400 font-medium"
           >
-            Browse through <span
+            {homepage.subtitle}
+            <span
               class="font-bold bg-gradient-to-r from-purple-600 to-blue-600 dark:from-purple-400 dark:to-blue-400 bg-clip-text text-transparent"
               >{albums.length}</span
             >

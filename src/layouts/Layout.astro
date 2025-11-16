@@ -1,12 +1,29 @@
 ---
 import "../styles/global.css";
+
+import Footer from "../components/Footer.astro";
 import ThemeSwitcher from "../components/ThemeSwitcher.astro";
+import siteConfigJson from "../config/site.json";
+import type { SiteConfig } from "../types/config";
+
+const siteConfig = siteConfigJson as SiteConfig;
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+const pageTitle = title || siteConfig.site.title;
+const pageDescription = description || siteConfig.site.description;
 ---
 
 <!doctype html>
 <html
   lang="en"
-  x-data="{ theme: $persist('light').as('app-theme') }"
+  x-data="{
+    theme: $persist('{siteConfig.theme.defaultTheme}').as('app-theme')
+  }"
   x-bind:class="theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme"
   x-init="
     if (theme === 'auto') {
@@ -23,13 +40,18 @@ import ThemeSwitcher from "../components/ThemeSwitcher.astro";
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <title>Photo Album</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="author" content={siteConfig.site.author} />
+    <title>{pageTitle}</title>
   </head>
   <body
-    class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300 antialiased"
+    class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300 antialiased min-h-screen flex flex-col"
   >
-    <ThemeSwitcher />
-    <slot />
+    {siteConfig.theme.enableThemeSwitcher && <ThemeSwitcher />}
+    <main class="flex-grow">
+      <slot />
+    </main>
+    <Footer />
     <script>
       import intersect from "@alpinejs/intersect";
       import persist from "@alpinejs/persist";

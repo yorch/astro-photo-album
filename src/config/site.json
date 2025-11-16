@@ -1,0 +1,45 @@
+{
+  "footer": {
+    "enabled": true,
+    "links": [
+      {
+        "text": "Contact",
+        "url": "/contact"
+      }
+    ],
+    "social": [
+      {
+        "icon": "github",
+        "platform": "github",
+        "url": "https://github.com/yorch"
+      },
+      {
+        "icon": "instagram",
+        "platform": "instagram",
+        "url": "https://instagram.com/yourusername"
+      }
+    ],
+    "text": "© 2025 Jorge Barnaby"
+  },
+  "gallery": {
+    "defaultLayout": "masonry",
+    "enableDownload": true,
+    "enableExif": true,
+    "enableKeyboardNavigation": true,
+    "enableTags": true,
+    "enableZoom": true
+  },
+  "homepage": {
+    "subtitle": "Browse through our collections",
+    "title": "Photo Albums"
+  },
+  "site": {
+    "author": "Jorge Barnaby",
+    "description": "A beautiful photo gallery built with Astro",
+    "title": "Photo Album"
+  },
+  "theme": {
+    "defaultTheme": "auto",
+    "enableThemeSwitcher": true
+  }
+}

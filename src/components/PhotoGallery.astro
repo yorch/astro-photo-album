@@ -1,5 +1,7 @@
 ---
+import siteConfigJson from "../config/site.json";
 import type { Photo } from "../types/album";
+import type { SiteConfig } from "../types/config";
 
 interface Props {
   photos: Photo[];
@@ -7,6 +9,8 @@ interface Props {
 }
 
 const { photos, albumId } = Astro.props;
+const siteConfig = siteConfigJson as SiteConfig;
+const { gallery } = siteConfig;
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, ""); // Remove trailing slash
 
@@ -23,6 +27,15 @@ const photosData = photos.map((photo, index) => ({
   thumbnailSrc: `${base}${photo.thumbnailUrl}`,
   title: photo.title,
 }));
+
+// Prepare config for Alpine
+const alpineConfig = {
+  enableDownload: gallery.enableDownload,
+  enableExif: gallery.enableExif,
+  enableKeyboardNavigation: gallery.enableKeyboardNavigation,
+  enableTags: gallery.enableTags,
+  enableZoom: gallery.enableZoom,
+};
 ---
 
 <div
@@ -35,6 +48,7 @@ const photosData = photos.map((photo, index) => ({
     scrollDirection: 'down',
     lastScrollY: 0,
     layoutMode: $persist('masonry').as('photo-gallery-layout'),
+    config: {},
     zoomLevel: 1,
     panX: 0,
     panY: 0,
@@ -44,12 +58,14 @@ const photosData = photos.map((photo, index) => ({
 
     init() {
       this.photos = JSON.parse(this.$el.dataset.photos);
+      this.config = JSON.parse(this.$el.dataset.config);
+      this.layoutMode = this.$persist(this.config.defaultLayout || 'masonry').as('photo-gallery-layout');
       this.availableTags = this.extractTags();
       this.setupScrollTracking();
     },
 
     zoomIn() {
-      if (this.zoomLevel === 1) {
+      if (this.zoomLevel === 1 && this.selectedPhoto) {
         // Preload full-size image when first zooming in
         const fullImg = new Image();
         fullImg.src = this.selectedPhoto.src;
@@ -238,6 +254,10 @@ const photosData = photos.map((photo, index) => ({
     }
   }"
   data-photos={JSON.stringify(photosData)}
+  data-config={JSON.stringify({
+    ...alpineConfig,
+    defaultLayout: gallery.defaultLayout,
+  })}
   class="w-full"
 >
   <!-- Controls: Tag Filter & Layout Switcher -->
@@ -245,7 +265,10 @@ const photosData = photos.map((photo, index) => ({
     class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
   >
     <!-- Tag Filter -->
-    <div class="flex flex-wrap gap-3">
+    <div
+      x-show="config.enableTags && availableTags.length > 1"
+      class="flex flex-wrap gap-3"
+    >
       <template x-for="tag in availableTags">
         <button
           @click="selectedTag = tag"
@@ -361,7 +384,7 @@ const photosData = photos.map((photo, index) => ({
             x-show="photo.tags && photo.tags.length > 0"
             x-bind:class="layoutMode === 'list' ? 'flex flex-wrap gap-1.5' : 'flex flex-wrap gap-1.5 mt-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 delay-75'"
           >
-            <template x-for="tag in photo.tags?.slice(0, 3) || []">
+            <template x-for="tag in (photo.tags?.slice(0, 3) || [])">
               <span
                 x-bind:class="layoutMode === 'list' ? 'inline-block bg-blue-500 rounded-full px-2 py-0.5 text-xs text-white capitalize' : 'inline-block bg-blue-500/80 backdrop-blur-sm rounded-full px-2 py-0.5 text-xs text-white capitalize'"
                 x-text="tag"></span>
@@ -382,15 +405,26 @@ const photosData = photos.map((photo, index) => ({
     x-transition:leave-start="opacity-100"
     x-transition:leave-end="opacity-0"
     @click="closeLightbox()"
-    @keyup.escape.window="closeLightbox()"
-    @keyup.arrow-left.window="lightboxOpen && prevPhoto()"
-    @keyup.arrow-right.window="lightboxOpen && nextPhoto()"
+    @keyup.escape.window="config.enableKeyboardNavigation && closeLightbox()"
+    @keyup.arrow-left.window="config.enableKeyboardNavigation && lightboxOpen && prevPhoto()"
+    @keyup.arrow-right.window="config.enableKeyboardNavigation && lightboxOpen && nextPhoto()"
+    @keydown.window="
+      if (config.enableKeyboardNavigation && config.enableZoom && lightboxOpen) {
+        if ($event.key === '+' || $event.key === '=') {
+          $event.preventDefault();
+          zoomIn();
+        } else if ($event.key === '-' || $event.key === '_') {
+          $event.preventDefault();
+          zoomOut();
+        }
+      }
+    "
     class="fixed inset-0 z-50 bg-gradient-to-br from-slate-900/98 via-purple-900/95 to-blue-900/98 backdrop-blur-xl flex items-center justify-center p-4"
     style="display: none;"
   >
     <!-- Download Button -->
     <a
-      x-show="selectedPhoto"
+      x-show="config.enableDownload && selectedPhoto"
       :href="selectedPhoto?.src"
       :download="selectedPhoto?.filename"
       @click.stop
@@ -494,7 +528,10 @@ const photosData = photos.map((photo, index) => ({
           @mouseleave="stopDrag()"
         />
         <!-- Zoom controls -->
-        <div class="absolute top-4 right-4 flex flex-col gap-2">
+        <div
+          x-show="config.enableZoom"
+          class="absolute top-4 right-4 flex flex-col gap-2"
+        >
           <button
             @click.stop="zoomIn()"
             class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm rounded-full p-2 hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors shadow-lg"
@@ -562,7 +599,7 @@ const photosData = photos.map((photo, index) => ({
 
         <!-- EXIF Metadata -->
         <div
-          x-show="selectedPhoto?.exif && (selectedPhoto.exif.camera || selectedPhoto.exif.dateTime)"
+          x-show="config.enableExif && selectedPhoto?.exif && (selectedPhoto.exif.camera || selectedPhoto.exif.dateTime)"
           class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm bg-gradient-to-br from-slate-900/60 to-purple-900/40 backdrop-blur-md rounded-2xl p-6 border border-purple-500/20 shadow-xl"
         >
           <div x-show="selectedPhoto?.exif?.dateTime">
@@ -642,7 +679,7 @@ const photosData = photos.map((photo, index) => ({
             Tags
           </div>
           <div class="flex flex-wrap justify-center gap-2">
-            <template x-for="tag in selectedPhoto?.tags || []">
+            <template x-for="tag in (selectedPhoto?.tags || [])">
               <span
                 class="inline-block bg-gradient-to-r from-purple-500/30 via-blue-500/30 to-cyan-500/30 backdrop-blur-sm border border-purple-400/30 rounded-full px-4 py-2 text-sm font-medium capitalize hover:scale-110 hover:rotate-2 transition-all duration-300 shadow-lg"
                 x-text="tag"></span>
