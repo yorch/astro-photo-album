@@ -59,7 +59,11 @@ const alpineConfig = {
     init() {
       this.photos = JSON.parse(this.$el.dataset.photos);
       this.config = JSON.parse(this.$el.dataset.config);
-      this.layoutMode = this.$persist(this.config.defaultLayout || 'masonry').as('photo-gallery-layout');
+      // Don't reassign layoutMode - it's already initialized with $persist above
+      // If no persisted value exists, use config.defaultLayout
+      if (!localStorage.getItem('_x_photo-gallery-layout')) {
+        this.layoutMode = this.config.defaultLayout || 'masonry';
+      }
       this.availableTags = this.extractTags();
       this.setupScrollTracking();
     },
