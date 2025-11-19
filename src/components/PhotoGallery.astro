@@ -64,6 +64,13 @@ const alpineConfig = {
       this.setupScrollTracking();
     },
 
+    // Analytics tracking helper
+    trackEvent(eventName, props = {}) {
+      if (typeof window !== 'undefined' && window.plausible) {
+        window.plausible(eventName, { props });
+      }
+    },
+
     zoomIn() {
       if (this.zoomLevel === 1 && this.selectedPhoto) {
         // Preload full-size image when first zooming in
@@ -72,14 +79,32 @@ const alpineConfig = {
       }
       // Zoom in steps: 1 -> 1.5 -> 2 -> 2.5 -> 3
       if (this.zoomLevel < 3) {
-        this.zoomLevel = Math.min(3, this.zoomLevel + 0.5);
+        const newZoomLevel = Math.min(3, this.zoomLevel + 0.5);
+        this.trackEvent('Zoom Action', {
+          action: 'zoom_in',
+          from_level: this.zoomLevel,
+          to_level: newZoomLevel,
+          album: this.$el.dataset.albumId || 'unknown',
+          filename: this.selectedPhoto?.filename,
+          title: this.selectedPhoto?.title || this.selectedPhoto?.filename
+        });
+        this.zoomLevel = newZoomLevel;
       }
     },
 
     zoomOut() {
       // Zoom out steps: 3 -> 2.5 -> 2 -> 1.5 -> 1
       if (this.zoomLevel > 1) {
-        this.zoomLevel = Math.max(1, this.zoomLevel - 0.5);
+        const newZoomLevel = Math.max(1, this.zoomLevel - 0.5);
+        this.trackEvent('Zoom Action', {
+          action: 'zoom_out',
+          from_level: this.zoomLevel,
+          to_level: newZoomLevel,
+          album: this.$el.dataset.albumId || 'unknown',
+          filename: this.selectedPhoto?.filename,
+          title: this.selectedPhoto?.title || this.selectedPhoto?.filename
+        });
+        this.zoomLevel = newZoomLevel;
         if (this.zoomLevel === 1) {
           this.panX = 0;
           this.panY = 0;
@@ -220,6 +245,12 @@ const alpineConfig = {
       this.selectedPhoto = photo;
       this.lightboxOpen = true;
       this.resetZoom();
+      // Track photo view
+      this.trackEvent('Photo View', {
+        album: this.$el.dataset.albumId || 'unknown',
+        filename: photo.filename,
+        title: photo.title || photo.filename
+      });
       // Preload lightbox image when lightbox opens
       const lightboxImg = new Image();
       lightboxImg.src = photo.lightboxSrc;
@@ -234,7 +265,16 @@ const alpineConfig = {
     nextPhoto() {
       const currentIndex = this.filteredPhotos.findIndex(p => p.id === this.selectedPhoto.id);
       const nextIndex = (currentIndex + 1) % this.filteredPhotos.length;
-      this.selectedPhoto = this.filteredPhotos[nextIndex];
+      const nextPhoto = this.filteredPhotos[nextIndex];
+      // Track navigation (with photo we're navigating FROM)
+      this.trackEvent('Photo Navigation', {
+        direction: 'next',
+        album: this.$el.dataset.albumId || 'unknown',
+        from_filename: this.selectedPhoto?.filename,
+        to_filename: nextPhoto?.filename,
+        to_title: nextPhoto?.title || nextPhoto?.filename
+      });
+      this.selectedPhoto = nextPhoto;
       this.resetZoom();
       // Preload next photo's lightbox image
       const nextNextIndex = (nextIndex + 1) % this.filteredPhotos.length;
@@ -245,7 +285,16 @@ const alpineConfig = {
     prevPhoto() {
       const currentIndex = this.filteredPhotos.findIndex(p => p.id === this.selectedPhoto.id);
       const prevIndex = (currentIndex - 1 + this.filteredPhotos.length) % this.filteredPhotos.length;
-      this.selectedPhoto = this.filteredPhotos[prevIndex];
+      const prevPhoto = this.filteredPhotos[prevIndex];
+      // Track navigation (with photo we're navigating FROM)
+      this.trackEvent('Photo Navigation', {
+        direction: 'prev',
+        album: this.$el.dataset.albumId || 'unknown',
+        from_filename: this.selectedPhoto?.filename,
+        to_filename: prevPhoto?.filename,
+        to_title: prevPhoto?.title || prevPhoto?.filename
+      });
+      this.selectedPhoto = prevPhoto;
       this.resetZoom();
       // Preload previous photo's lightbox image
       const prevPrevIndex = (prevIndex - 1 + this.filteredPhotos.length) % this.filteredPhotos.length;
@@ -258,6 +307,7 @@ const alpineConfig = {
     ...alpineConfig,
     defaultLayout: gallery.defaultLayout,
   })}
+  data-album-id={albumId}
   class="w-full"
 >
   <!-- Controls: Tag Filter & Layout Switcher -->
@@ -271,7 +321,15 @@ const alpineConfig = {
     >
       <template x-for="tag in availableTags">
         <button
-          @click="selectedTag = tag"
+          @click="
+            if (selectedTag !== tag) {
+              trackEvent('Tag Filter', {
+                tag: tag,
+                album: $el.dataset.albumId || 'unknown'
+              });
+            }
+            selectedTag = tag;
+          "
           x-bind:class="{
             'bg-gradient-to-r from-purple-500 via-blue-500 to-cyan-500 text-white shadow-lg shadow-purple-500/30 scale-110 -rotate-1': selectedTag === tag,
             'bg-gradient-to-r from-slate-100 to-slate-50 dark:from-slate-700 dark:to-slate-800 text-slate-700 dark:text-slate-300 hover:bg-gradient-to-r hover:from-slate-200 hover:to-slate-100 dark:hover:from-slate-600 dark:hover:to-slate-700 hover:shadow-md hover:scale-105 border border-slate-200 dark:border-slate-600': selectedTag !== tag
@@ -286,7 +344,12 @@ const alpineConfig = {
       class="flex gap-2 bg-gradient-to-r from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-900 rounded-xl p-1.5 border-2 border-slate-200 dark:border-slate-700 shadow-md"
     >
       <button
-        @click="layoutMode = 'masonry'"
+        @click="
+          if (layoutMode !== 'masonry') {
+            trackEvent('Layout Change', { from: layoutMode, to: 'masonry' });
+            layoutMode = 'masonry';
+          }
+        "
         x-bind:class="{
           'bg-gradient-to-br from-purple-500 to-blue-500 text-white shadow-lg scale-110': layoutMode === 'masonry',
           'hover:bg-slate-200 dark:hover:bg-slate-700 hover:scale-105': layoutMode !== 'masonry'
@@ -310,7 +373,12 @@ const alpineConfig = {
         </svg>
       </button>
       <button
-        @click="layoutMode = 'grid'"
+        @click="
+          if (layoutMode !== 'grid') {
+            trackEvent('Layout Change', { from: layoutMode, to: 'grid' });
+            layoutMode = 'grid';
+          }
+        "
         x-bind:class="{
           'bg-gradient-to-br from-purple-500 to-blue-500 text-white shadow-lg scale-110': layoutMode === 'grid',
           'hover:bg-slate-200 dark:hover:bg-slate-700 hover:scale-105': layoutMode !== 'grid'
@@ -334,7 +402,12 @@ const alpineConfig = {
         </svg>
       </button>
       <button
-        @click="layoutMode = 'list'"
+        @click="
+          if (layoutMode !== 'list') {
+            trackEvent('Layout Change', { from: layoutMode, to: 'list' });
+            layoutMode = 'list';
+          }
+        "
         x-bind:class="{
           'bg-gradient-to-br from-purple-500 to-blue-500 text-white shadow-lg scale-110': layoutMode === 'list',
           'hover:bg-slate-200 dark:hover:bg-slate-700 hover:scale-105': layoutMode !== 'list'
@@ -427,7 +500,12 @@ const alpineConfig = {
       x-show="config.enableDownload && selectedPhoto"
       :href="selectedPhoto?.src"
       :download="selectedPhoto?.filename"
-      @click.stop
+      @click.stop="
+        trackEvent('Photo Download', {
+          album: $el.dataset.albumId || 'unknown',
+          filename: selectedPhoto?.filename
+        });
+      "
       class="absolute top-6 right-20 text-white hover:text-cyan-400 transition-all duration-300 z-10 bg-gradient-to-br from-purple-500/40 to-blue-500/40 hover:from-purple-500/60 hover:to-blue-500/60 rounded-full p-3 backdrop-blur-md shadow-lg hover:scale-110"
       aria-label="Download photo"
       title="Download full size"
