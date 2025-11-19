@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 
+import Analytics from "../components/Analytics.astro";
 import Footer from "../components/Footer.astro";
 import ThemeSwitcher from "../components/ThemeSwitcher.astro";
 import siteConfigJson from "../config/site.json";
@@ -43,6 +44,8 @@ const pageDescription = description || siteConfig.site.description;
     <meta name="description" content={pageDescription} />
     <meta name="author" content={siteConfig.site.author} />
     <title>{pageTitle}</title>
+
+    <Analytics />
   </head>
   <body
     class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300 antialiased min-h-screen flex flex-col"

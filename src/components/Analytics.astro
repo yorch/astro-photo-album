@@ -1,0 +1,20 @@
+---
+import siteConfigJson from "../config/site.json";
+import type { SiteConfig } from "../types/config";
+
+const siteConfig = siteConfigJson as SiteConfig;
+---
+
+{
+  siteConfig.analytics.plausibleScriptUrl && (
+    <>
+      <script async src={siteConfig.analytics.plausibleScriptUrl} />
+      <script is:inline>
+        window.plausible=window.plausible||function()
+        {(plausible.q = plausible.q || []).push(arguments)}
+        ,plausible.init=plausible.init||function(i){(plausible.o = i || {})};
+        plausible.init()
+      </script>
+    </>
+  )
+}

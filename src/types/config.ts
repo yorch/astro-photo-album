@@ -1,4 +1,7 @@
 export interface SiteConfig {
+  analytics: {
+    plausibleScriptUrl: string;
+  };
   site: {
     title: string;
     description: string;

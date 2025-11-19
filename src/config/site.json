@@ -1,4 +1,7 @@
 {
+  "analytics": {
+    "plausibleScriptUrl": ""
+  },
   "footer": {
     "enabled": true,
     "links": [
