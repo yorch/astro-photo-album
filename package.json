@@ -23,6 +23,7 @@
     "@tailwindcss/vite": "4.1.18",
     "alpinejs": "3.15.8",
     "astro": "5.17.2",
+    "astro-analytics": "2.7.0",
     "exifreader": "4.36.1",
     "sharp": "0.34.5",
     "tailwindcss": "4.1.18"

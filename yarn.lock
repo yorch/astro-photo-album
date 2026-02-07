@@ -1838,6 +1838,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"astro-analytics@npm:2.7.0":
+  version: 2.7.0
+  resolution: "astro-analytics@npm:2.7.0"
+  checksum: 10c0/e17848913b7e83836ae302a6998135346c85537e6bfbee06612f3b9165823856217c9b828061359ae62988cac937e139289ed50aca5c7b567cf7229238032bfa
+  languageName: node
+  linkType: hard
+
 "astro-photo-album@workspace:.":
   version: 0.0.0-use.local
   resolution: "astro-photo-album@workspace:."
@@ -1853,6 +1860,7 @@ __metadata:
     "@types/node": "npm:24.10.13"
     alpinejs: "npm:3.15.8"
     astro: "npm:5.17.2"
+    astro-analytics: "npm:2.7.0"
     exifreader: "npm:4.36.1"
     sharp: "npm:0.34.5"
     tailwindcss: "npm:4.1.18"
@@ -3268,7 +3276,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lru-cache@npm:^11.0.0, lru-cache@npm:^11.1.0, lru-cache@npm:^11.2.0, lru-cache@npm:^11.2.1":
+"lru-cache@npm:^11.0.0, lru-cache@npm:^11.1.0, lru-cache@npm:^11.2.1":
+  version: 11.2.2
+  resolution: "lru-cache@npm:11.2.2"
+  checksum: 10c0/72d7831bbebc85e2bdefe01047ee5584db69d641c48d7a509e86f66f6ee111b30af7ec3bd68a967d47b69a4b1fa8bbf3872630bd06a63b6735e6f0a5f1c8e83d
+  languageName: node
+  linkType: hard
+
+"lru-cache@npm:^11.2.0":
   version: 11.2.6
   resolution: "lru-cache@npm:11.2.6"
   checksum: 10c0/73bbffb298760e71b2bfe8ebc16a311c6a60ceddbba919cfedfd8635c2d125fbfb5a39b71818200e67973b11f8d59c5a9e31d6f90722e340e90393663a66e5cd
