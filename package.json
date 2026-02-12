@@ -18,23 +18,23 @@
     "lint:fix": "biome check --write ."
   },
   "dependencies": {
-    "@alpinejs/intersect": "3.15.2",
-    "@alpinejs/persist": "3.15.2",
-    "@tailwindcss/vite": "4.1.17",
-    "alpinejs": "3.15.2",
-    "astro": "5.15.8",
-    "exifreader": "4.32.0",
+    "@alpinejs/intersect": "3.15.8",
+    "@alpinejs/persist": "3.15.8",
+    "@tailwindcss/vite": "4.1.18",
+    "alpinejs": "3.15.8",
+    "astro": "5.17.2",
+    "exifreader": "4.36.1",
     "sharp": "0.34.5",
-    "tailwindcss": "4.1.17"
+    "tailwindcss": "4.1.18"
   },
   "devDependencies": {
-    "@astrojs/check": "0.9.5",
-    "@biomejs/biome": "2.3.5",
+    "@astrojs/check": "0.9.6",
+    "@biomejs/biome": "2.3.14",
     "@types/alpinejs": "3.13.11",
     "@types/alpinejs__intersect": "3.13.4",
     "@types/alpinejs__persist": "3.13.4",
-    "@types/node": "24.10.1",
-    "tsx": "4.20.6",
+    "@types/node": "24.10.13",
+    "tsx": "4.21.0",
     "typescript": "5.9.3"
   },
   "packageManager": "yarn@4.12.0"
