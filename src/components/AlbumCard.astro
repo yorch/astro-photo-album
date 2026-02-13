@@ -101,7 +101,9 @@ const imageSrc = coverPhotoThumbnail ? `${base}${coverPhotoThumbnail}` : null;
           <a
             href={downloadUrl}
             download
-            onclick={`if(window.plausible){window.plausible('Album Download',{props:{album:'${id}',title:'${title.replace(/'/g, "\\'")}'}})}`}
+            data-album-id={id}
+            data-album-title={title}
+            onclick="if(window.plausible){window.plausible('Album Download',{props:{album:this.dataset.albumId,title:this.dataset.albumTitle}})}"
             class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-100 to-teal-100 dark:from-emerald-900/40 dark:to-teal-900/40 rounded-full shadow-sm hover:shadow-md hover:scale-105 transition-all duration-200"
             title="Download album"
           >

@@ -50,6 +50,7 @@ const alpineConfig = {
     layoutMode: $persist('masonry').as('photo-gallery-layout'),
     config: {},
     albumId: 'unknown',
+    baseUrl: '',
     zoomLevel: 1,
     _zoomTrackTimeout: null,
     _zoomStartLevel: 1,
@@ -63,6 +64,7 @@ const alpineConfig = {
       this.photos = JSON.parse(this.$el.dataset.photos);
       this.config = JSON.parse(this.$el.dataset.config);
       this.albumId = this.$el.dataset.albumId || 'unknown';
+      this.baseUrl = this.$el.dataset.baseUrl || '';
       // Don't reassign layoutMode - it's already initialized with $persist above
       // If no persisted value exists, use config.defaultLayout
       if (!localStorage.getItem('_x_photo-gallery-layout')) {
@@ -84,7 +86,7 @@ const alpineConfig = {
     trackPageview(path) {
       if (typeof window !== 'undefined' && window.plausible) {
         window.plausible('pageview', {
-          u: window.location.origin + path + window.location.search
+          u: `${window.location.origin}${this.baseUrl}${path}`
         });
       }
     },
@@ -277,7 +279,7 @@ const alpineConfig = {
         lens: photo.exif?.lens || '(none)'
       });
       // Track as virtual pageview so each photo shows in the Pages report
-      this.trackPageview('/album/' + this.albumId + '/photo/' + encodeURIComponent(photo.filename));
+      this.trackPageview(`/album/${this.albumId}/photo/${encodeURIComponent(photo.filename)}`);
       // Preload lightbox image when lightbox opens
       const lightboxImg = new Image();
       lightboxImg.src = photo.lightboxSrc;
@@ -287,7 +289,7 @@ const alpineConfig = {
       this.lightboxOpen = false;
       this.resetZoom();
       // Send virtual pageview back to album page so time-on-page is accurate
-      this.trackPageview('/album/' + this.albumId);
+      this.trackPageview(`/album/${this.albumId}`);
       setTimeout(() => this.selectedPhoto = null, 300);
     },
 
@@ -306,7 +308,7 @@ const alpineConfig = {
       this.selectedPhoto = nextPhoto;
       this.resetZoom();
       // Track the newly viewed photo as a virtual pageview
-      this.trackPageview('/album/' + this.albumId + '/photo/' + encodeURIComponent(nextPhoto.filename));
+      this.trackPageview(`/album/${this.albumId}/photo/${encodeURIComponent(nextPhoto.filename)}`);
       // Preload next photo's lightbox image
       const nextNextIndex = (nextIndex + 1) % this.filteredPhotos.length;
       const preloadImg = new Image();
@@ -328,7 +330,7 @@ const alpineConfig = {
       this.selectedPhoto = prevPhoto;
       this.resetZoom();
       // Track the newly viewed photo as a virtual pageview
-      this.trackPageview('/album/' + this.albumId + '/photo/' + encodeURIComponent(prevPhoto.filename));
+      this.trackPageview(`/album/${this.albumId}/photo/${encodeURIComponent(prevPhoto.filename)}`);
       // Preload previous photo's lightbox image
       const prevPrevIndex = (prevIndex - 1 + this.filteredPhotos.length) % this.filteredPhotos.length;
       const preloadImg = new Image();
@@ -341,6 +343,7 @@ const alpineConfig = {
     defaultLayout: gallery.defaultLayout,
   })}
   data-album-id={albumId}
+  data-base-url={base}
   class="w-full"
 >
   <!-- Controls: Tag Filter & Layout Switcher -->
