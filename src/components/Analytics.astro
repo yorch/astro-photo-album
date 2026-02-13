@@ -1,19 +1,42 @@
 ---
+
 import siteConfigJson from "../config/site.json";
 import type { SiteConfig } from "../types/config";
 
 const siteConfig = siteConfigJson as SiteConfig;
+const { analytics } = siteConfig;
+
+// Build the script URL with extensions
+// Extensions are appended to the filename: script.outbound-links.file-downloads.js
+function buildScriptUrl(baseUrl: string): string {
+  if (!baseUrl) return "";
+
+  const extensions: string[] = [];
+  if (analytics.enableOutboundLinks) extensions.push("outbound-links");
+  if (analytics.enableFileDownloads) extensions.push("file-downloads");
+
+  if (extensions.length === 0) return baseUrl;
+
+  // Replace script.js with script.{extensions}.js
+  return baseUrl.replace(/\/js\/script\.js$/, `/js/script.${extensions.join(".")}.js`);
+}
+
+const scriptUrl = buildScriptUrl(analytics.plausibleScriptUrl);
 ---
 
 {
-  siteConfig.analytics.plausibleScriptUrl && (
+  analytics.plausibleScriptUrl && (
     <>
-      <script async src={siteConfig.analytics.plausibleScriptUrl} />
+      <script
+        is:inline
+        defer
+        data-domain={analytics.plausibleDomain || undefined}
+        src={scriptUrl}
+      />
       <script is:inline>
-        window.plausible=window.plausible||function()
-        {(plausible.q = plausible.q || []).push(arguments)}
-        ,plausible.init=plausible.init||function(i){(plausible.o = i || {})};
-        plausible.init()
+        window.plausible = window.plausible || function() {
+          (window.plausible.q = window.plausible.q || []).push(arguments);
+        };
       </script>
     </>
   )

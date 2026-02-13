@@ -1,4 +1,5 @@
 ---
+
 import siteConfigJson from "../config/site.json";
 import type { Photo } from "../types/album";
 import type { SiteConfig } from "../types/config";
@@ -72,6 +73,16 @@ const alpineConfig = {
     trackEvent(eventName, props = {}) {
       if (typeof window !== 'undefined' && window.plausible) {
         window.plausible(eventName, { props });
+      }
+    },
+
+    // Track a virtual pageview with a custom URL path
+    // This makes individual photos appear as pages in Plausible's dashboard
+    trackPageview(path) {
+      if (typeof window !== 'undefined' && window.plausible) {
+        window.plausible('pageview', {
+          u: window.location.origin + path + window.location.search
+        });
       }
     },
 
@@ -249,12 +260,17 @@ const alpineConfig = {
       this.selectedPhoto = photo;
       this.lightboxOpen = true;
       this.resetZoom();
-      // Track photo view
+      const albumId = this.$el.dataset.albumId || 'unknown';
+      // Track photo view as custom event with metadata
       this.trackEvent('Photo View', {
-        album: this.$el.dataset.albumId || 'unknown',
+        album: albumId,
         filename: photo.filename,
-        title: photo.title || photo.filename
+        title: photo.title || photo.filename,
+        camera: photo.exif?.camera || '(none)',
+        lens: photo.exif?.lens || '(none)'
       });
+      // Track as virtual pageview so each photo shows in the Pages report
+      this.trackPageview('/album/' + albumId + '/photo/' + encodeURIComponent(photo.filename));
       // Preload lightbox image when lightbox opens
       const lightboxImg = new Image();
       lightboxImg.src = photo.lightboxSrc;
@@ -270,16 +286,19 @@ const alpineConfig = {
       const currentIndex = this.filteredPhotos.findIndex(p => p.id === this.selectedPhoto.id);
       const nextIndex = (currentIndex + 1) % this.filteredPhotos.length;
       const nextPhoto = this.filteredPhotos[nextIndex];
+      const albumId = this.$el.dataset.albumId || 'unknown';
       // Track navigation (with photo we're navigating FROM)
       this.trackEvent('Photo Navigation', {
         direction: 'next',
-        album: this.$el.dataset.albumId || 'unknown',
+        album: albumId,
         from_filename: this.selectedPhoto?.filename,
         to_filename: nextPhoto?.filename,
         to_title: nextPhoto?.title || nextPhoto?.filename
       });
       this.selectedPhoto = nextPhoto;
       this.resetZoom();
+      // Track the newly viewed photo as a virtual pageview
+      this.trackPageview('/album/' + albumId + '/photo/' + encodeURIComponent(nextPhoto.filename));
       // Preload next photo's lightbox image
       const nextNextIndex = (nextIndex + 1) % this.filteredPhotos.length;
       const preloadImg = new Image();
@@ -290,16 +309,19 @@ const alpineConfig = {
       const currentIndex = this.filteredPhotos.findIndex(p => p.id === this.selectedPhoto.id);
       const prevIndex = (currentIndex - 1 + this.filteredPhotos.length) % this.filteredPhotos.length;
       const prevPhoto = this.filteredPhotos[prevIndex];
+      const albumId = this.$el.dataset.albumId || 'unknown';
       // Track navigation (with photo we're navigating FROM)
       this.trackEvent('Photo Navigation', {
         direction: 'prev',
-        album: this.$el.dataset.albumId || 'unknown',
+        album: albumId,
         from_filename: this.selectedPhoto?.filename,
         to_filename: prevPhoto?.filename,
         to_title: prevPhoto?.title || prevPhoto?.filename
       });
       this.selectedPhoto = prevPhoto;
       this.resetZoom();
+      // Track the newly viewed photo as a virtual pageview
+      this.trackPageview('/album/' + albumId + '/photo/' + encodeURIComponent(prevPhoto.filename));
       // Preload previous photo's lightbox image
       const prevPrevIndex = (prevIndex - 1 + this.filteredPhotos.length) % this.filteredPhotos.length;
       const preloadImg = new Image();
