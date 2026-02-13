@@ -1,5 +1,4 @@
 ---
-
 import siteConfigJson from "../config/site.json";
 import type { Photo } from "../types/album";
 import type { SiteConfig } from "../types/config";
@@ -50,7 +49,10 @@ const alpineConfig = {
     lastScrollY: 0,
     layoutMode: $persist('masonry').as('photo-gallery-layout'),
     config: {},
+    albumId: 'unknown',
     zoomLevel: 1,
+    _zoomTrackTimeout: null,
+    _zoomStartLevel: 1,
     panX: 0,
     panY: 0,
     isDragging: false,
@@ -60,6 +62,7 @@ const alpineConfig = {
     init() {
       this.photos = JSON.parse(this.$el.dataset.photos);
       this.config = JSON.parse(this.$el.dataset.config);
+      this.albumId = this.$el.dataset.albumId || 'unknown';
       // Don't reassign layoutMode - it's already initialized with $persist above
       // If no persisted value exists, use config.defaultLayout
       if (!localStorage.getItem('_x_photo-gallery-layout')) {
@@ -86,6 +89,22 @@ const alpineConfig = {
       }
     },
 
+    // Debounced zoom tracking - fires once after user stops zooming (500ms)
+    _scheduleZoomTrack() {
+      clearTimeout(this._zoomTrackTimeout);
+      this._zoomTrackTimeout = setTimeout(() => {
+        if (this._zoomStartLevel !== this.zoomLevel) {
+          this.trackEvent('Zoom Action', {
+            from_level: String(this._zoomStartLevel),
+            to_level: String(this.zoomLevel),
+            album: this.albumId,
+            filename: this.selectedPhoto?.filename
+          });
+          this._zoomStartLevel = this.zoomLevel;
+        }
+      }, 500);
+    },
+
     zoomIn() {
       if (this.zoomLevel === 1 && this.selectedPhoto) {
         // Preload full-size image when first zooming in
@@ -94,40 +113,29 @@ const alpineConfig = {
       }
       // Zoom in steps: 1 -> 1.5 -> 2 -> 2.5 -> 3
       if (this.zoomLevel < 3) {
-        const newZoomLevel = Math.min(3, this.zoomLevel + 0.5);
-        this.trackEvent('Zoom Action', {
-          action: 'zoom_in',
-          from_level: this.zoomLevel,
-          to_level: newZoomLevel,
-          album: this.$el.dataset.albumId || 'unknown',
-          filename: this.selectedPhoto?.filename,
-          title: this.selectedPhoto?.title || this.selectedPhoto?.filename
-        });
-        this.zoomLevel = newZoomLevel;
+        if (this._zoomTrackTimeout === null) this._zoomStartLevel = this.zoomLevel;
+        this.zoomLevel = Math.min(3, this.zoomLevel + 0.5);
+        this._scheduleZoomTrack();
       }
     },
 
     zoomOut() {
       // Zoom out steps: 3 -> 2.5 -> 2 -> 1.5 -> 1
       if (this.zoomLevel > 1) {
-        const newZoomLevel = Math.max(1, this.zoomLevel - 0.5);
-        this.trackEvent('Zoom Action', {
-          action: 'zoom_out',
-          from_level: this.zoomLevel,
-          to_level: newZoomLevel,
-          album: this.$el.dataset.albumId || 'unknown',
-          filename: this.selectedPhoto?.filename,
-          title: this.selectedPhoto?.title || this.selectedPhoto?.filename
-        });
-        this.zoomLevel = newZoomLevel;
+        if (this._zoomTrackTimeout === null) this._zoomStartLevel = this.zoomLevel;
+        this.zoomLevel = Math.max(1, this.zoomLevel - 0.5);
         if (this.zoomLevel === 1) {
           this.panX = 0;
           this.panY = 0;
         }
+        this._scheduleZoomTrack();
       }
     },
 
     resetZoom() {
+      clearTimeout(this._zoomTrackTimeout);
+      this._zoomTrackTimeout = null;
+      this._zoomStartLevel = 1;
       this.zoomLevel = 1;
       this.panX = 0;
       this.panY = 0;
@@ -260,17 +268,16 @@ const alpineConfig = {
       this.selectedPhoto = photo;
       this.lightboxOpen = true;
       this.resetZoom();
-      const albumId = this.$el.dataset.albumId || 'unknown';
       // Track photo view as custom event with metadata
       this.trackEvent('Photo View', {
-        album: albumId,
+        album: this.albumId,
         filename: photo.filename,
         title: photo.title || photo.filename,
         camera: photo.exif?.camera || '(none)',
         lens: photo.exif?.lens || '(none)'
       });
       // Track as virtual pageview so each photo shows in the Pages report
-      this.trackPageview('/album/' + albumId + '/photo/' + encodeURIComponent(photo.filename));
+      this.trackPageview('/album/' + this.albumId + '/photo/' + encodeURIComponent(photo.filename));
       // Preload lightbox image when lightbox opens
       const lightboxImg = new Image();
       lightboxImg.src = photo.lightboxSrc;
@@ -279,6 +286,8 @@ const alpineConfig = {
     closeLightbox() {
       this.lightboxOpen = false;
       this.resetZoom();
+      // Send virtual pageview back to album page so time-on-page is accurate
+      this.trackPageview('/album/' + this.albumId);
       setTimeout(() => this.selectedPhoto = null, 300);
     },
 
@@ -286,11 +295,10 @@ const alpineConfig = {
       const currentIndex = this.filteredPhotos.findIndex(p => p.id === this.selectedPhoto.id);
       const nextIndex = (currentIndex + 1) % this.filteredPhotos.length;
       const nextPhoto = this.filteredPhotos[nextIndex];
-      const albumId = this.$el.dataset.albumId || 'unknown';
       // Track navigation (with photo we're navigating FROM)
       this.trackEvent('Photo Navigation', {
         direction: 'next',
-        album: albumId,
+        album: this.albumId,
         from_filename: this.selectedPhoto?.filename,
         to_filename: nextPhoto?.filename,
         to_title: nextPhoto?.title || nextPhoto?.filename
@@ -298,7 +306,7 @@ const alpineConfig = {
       this.selectedPhoto = nextPhoto;
       this.resetZoom();
       // Track the newly viewed photo as a virtual pageview
-      this.trackPageview('/album/' + albumId + '/photo/' + encodeURIComponent(nextPhoto.filename));
+      this.trackPageview('/album/' + this.albumId + '/photo/' + encodeURIComponent(nextPhoto.filename));
       // Preload next photo's lightbox image
       const nextNextIndex = (nextIndex + 1) % this.filteredPhotos.length;
       const preloadImg = new Image();
@@ -309,11 +317,10 @@ const alpineConfig = {
       const currentIndex = this.filteredPhotos.findIndex(p => p.id === this.selectedPhoto.id);
       const prevIndex = (currentIndex - 1 + this.filteredPhotos.length) % this.filteredPhotos.length;
       const prevPhoto = this.filteredPhotos[prevIndex];
-      const albumId = this.$el.dataset.albumId || 'unknown';
       // Track navigation (with photo we're navigating FROM)
       this.trackEvent('Photo Navigation', {
         direction: 'prev',
-        album: albumId,
+        album: this.albumId,
         from_filename: this.selectedPhoto?.filename,
         to_filename: prevPhoto?.filename,
         to_title: prevPhoto?.title || prevPhoto?.filename
@@ -321,7 +328,7 @@ const alpineConfig = {
       this.selectedPhoto = prevPhoto;
       this.resetZoom();
       // Track the newly viewed photo as a virtual pageview
-      this.trackPageview('/album/' + albumId + '/photo/' + encodeURIComponent(prevPhoto.filename));
+      this.trackPageview('/album/' + this.albumId + '/photo/' + encodeURIComponent(prevPhoto.filename));
       // Preload previous photo's lightbox image
       const prevPrevIndex = (prevIndex - 1 + this.filteredPhotos.length) % this.filteredPhotos.length;
       const preloadImg = new Image();
@@ -351,7 +358,7 @@ const alpineConfig = {
             if (selectedTag !== tag) {
               trackEvent('Tag Filter', {
                 tag: tag,
-                album: $el.dataset.albumId || 'unknown'
+                album: albumId
               });
             }
             selectedTag = tag;
@@ -528,7 +535,7 @@ const alpineConfig = {
       :download="selectedPhoto?.filename"
       @click.stop="
         trackEvent('Photo Download', {
-          album: $el.dataset.albumId || 'unknown',
+          album: albumId,
           filename: selectedPhoto?.filename
         });
       "
