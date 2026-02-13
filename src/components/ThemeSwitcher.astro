@@ -25,7 +25,12 @@
   >
     <template x-for="themeOption in themes" :key="themeOption">
       <button
-        @click="theme = themeOption"
+        @click="
+          if (theme !== themeOption && window.plausible) {
+            window.plausible('Theme Switch', { props: { from: theme, to: themeOption } });
+          }
+          theme = themeOption;
+        "
         x-bind:class="{
           'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-sm': theme === themeOption,
           'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700': theme !== themeOption

@@ -1,6 +1,9 @@
 export interface SiteConfig {
   analytics: {
     plausibleScriptUrl: string;
+    plausibleDomain: string;
+    enableOutboundLinks: boolean;
+    enableFileDownloads: boolean;
   };
   site: {
     title: string;

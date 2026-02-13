@@ -1,12 +1,14 @@
 {
   "albums": [
     {
-      "coverPhoto": null,
-      "description": "A sample photo album to demonstrate the photo gallery features",
       "id": "sample-album",
+      "description": "A sample photo album to demonstrate the photo gallery features",
+      "downloadUrl": null,
+      "title": "Sample Album",
+      "coverPhoto": null,
+      "coverPhotoThumbnail": null,
       "photoCount": 0,
-      "photos": [],
-      "title": "Sample Album"
+      "photos": []
     }
   ]
 }
